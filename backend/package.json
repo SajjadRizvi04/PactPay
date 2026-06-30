@@ -1,9 +1,12 @@
 {
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "prisma": "^5.22.0"
+    "helmet": "^8.2.0",
+    "prisma": "^5.22.0",
+    "zod": "^4.4.3"
   },
   "name": "backend",
   "version": "1.0.0",
@@ -14,8 +17,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
