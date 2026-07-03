@@ -2,7 +2,7 @@ import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import authRouter from './src/modules/auth/auth.routes.js'
-
+import contractRouter from './src/modules/contracts/contract.routes.js'
 const app = express()
 
 app.use(helmet())
@@ -14,5 +14,6 @@ app.get('/health', (req,res) => {
 })
 
 app.use('/api/auth', authRouter)
+app.use('/api/contracts', contractRouter)
 
 export default app
