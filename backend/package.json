@@ -8,6 +8,8 @@
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
     "prisma": "^5.22.0",
+    "razorpay": "^2.9.6",
+    "uuid": "^14.0.1",
     "zod": "^4.4.3"
   },
   "name": "backend",

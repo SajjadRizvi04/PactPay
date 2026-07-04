@@ -64,7 +64,7 @@ export const updateContractStatus = async (contractId, userId,nextStatus) =>{
     })
 }
 
-export const submitMileStone = async (contractId, mileStoneId, userId) => {
+export const submitMileStone = async (contractId, milestoneId, userId) => {
     const milestone = await prisma.milestone.findUnique({
         where: {id: milestoneId},
         include: {contract: true}

@@ -8,7 +8,7 @@ const router = Router()
 
 router.post('/', authenticate,validate(createContractSchema), create)
 router.get('/:id', authenticate, get)
-router.patch(':id/status', authenticate, validate(updateContractStatusSchema),updateStatus)
+router.patch('/:id/status', authenticate, validate(updateContractStatusSchema),updateStatus)
 router.post('/:contractId/milestones/:milestoneId/submit', authenticate,submit)
 
 export default router
