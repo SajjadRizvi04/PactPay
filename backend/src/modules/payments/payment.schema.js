@@ -9,6 +9,13 @@ export const releasePaymentSchema = z.object({
     contractId: z.string().uuid(),
     milestoneId: z.string().uuid()
 })
+export const verifyPaymentSchema = z.object({
+  razorpayOrderId: z.string(),
+  razorpayPaymentId: z.string(),
+  razorpaySignature: z.string(),
+  contractId: z.string().uuid(),
+  amount: z.number().positive()
+})
 
 export const refundSchema = z.object({
     contractId: z.string().uuid(),
