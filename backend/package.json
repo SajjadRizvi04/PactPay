@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google/genai": "^2.10.0",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",

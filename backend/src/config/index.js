@@ -8,7 +8,8 @@ const envSchema = z.object({
     JWT_SECRET: z.string(),
     PORT: z.string().default('3000'),
     RAZORPAY_KEY_ID: z.string(),
-    RAZORPAY_KEY_SECRET: z.string()
+    RAZORPAY_KEY_SECRET: z.string(),
+    GEMINI_API_KEY: z.string()
 })
 
 const parsed = envSchema.safeParse(process.env)
