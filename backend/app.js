@@ -4,6 +4,7 @@ import cors from 'cors'
 import authRouter from './src/modules/auth/auth.routes.js'
 import contractRouter from './src/modules/contracts/contract.routes.js'
 import paymentRouter from './src/modules/payments/payment.routes.js'
+import aiRouter from './src/modules/ai/ai.routes.js'
 const app = express()
 
 app.use(helmet())
@@ -17,5 +18,6 @@ app.get('/health', (req,res) => {
 app.use('/api/auth', authRouter)
 app.use('/api/contracts', contractRouter)
 app.use('/api/payments', paymentRouter)
+app.use('/api/ai', aiRouter)
 
 export default app

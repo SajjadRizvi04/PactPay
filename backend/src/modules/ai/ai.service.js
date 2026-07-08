@@ -69,7 +69,7 @@ export const assessMilestone = async (contractId,milestoneId)=> {
         throw new Error('AI returned invalid verdict')
     }
 
-    const verdict = await prisma.aIVerdict,create({
+    const verdict = await prisma.aIVerdict.create({
         data: {
             verdict: parsed.verdict,
             confidence: parsed.confidence,
