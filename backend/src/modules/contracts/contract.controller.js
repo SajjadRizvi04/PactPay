@@ -29,7 +29,7 @@ export const updateStatus = async(req,res)=> {
 
 export const submit = async(req,res)=> {
     try {
-        const milestone = await submitMileStone(req.params.contractId, req.params.milestoneId, req.user.id)
+        const milestone = await submitMileStone(req.params.contractId, req.params.milestoneId, req.user.id,req.body)
         res.status(200).json(milestone)
     } catch (error) {
         res.status(400).json({error: error.message})

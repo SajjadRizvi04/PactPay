@@ -64,7 +64,7 @@ export const updateContractStatus = async (contractId, userId,nextStatus) =>{
     })
 }
 
-export const submitMileStone = async (contractId, milestoneId, userId) => {
+export const submitMileStone = async (contractId, milestoneId, userId, {submissionNotes,submissionUrl}) => {
     const milestone = await prisma.milestone.findUnique({
         where: {id: milestoneId},
         include: {contract: true}
@@ -82,6 +82,10 @@ export const submitMileStone = async (contractId, milestoneId, userId) => {
 
     return await prisma.milestone.update({
         where: {id: milestoneId}, 
-        data: {status: validStatus}
+        data: {
+            status: validStatus,
+            submissionNotes,
+            submissionUrl
+        }
     })
 } 

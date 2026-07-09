@@ -10,3 +10,5 @@ router.post('/fund',authenticate,validate(fundEscrowSchema),fundEscrowHandler)
 router.post('/verify', authenticate, validate(verifyPaymentSchema),verifyAndFundEscrowHandler)
 router.post('/release', authenticate, validate(releasePaymentSchema),releasePaymentHandler)
 router.post('/refund', authenticate, validate(refundSchema), refundPaymentHandler)
+
+export default router

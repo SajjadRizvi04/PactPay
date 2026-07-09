@@ -3,7 +3,7 @@ import config from '../../config/index.js'
 import prisma from '../../db/client.js'
 
 
-const ai = new GoogleGenAI({ apiKey: config })
+const ai = new GoogleGenAI({ apiKey: config.GEMINI_API_KEY })
 
 const buildPrompt = (contract, milestone) => {
     return `
@@ -19,6 +19,10 @@ const buildPrompt = (contract, milestone) => {
     Amount: ${milestone.amount}
     Due Date: ${milestone.dueDate}
     Status: ${milestone.status}
+
+    FREELAMCER SUBMISSION: 
+    Notes: ${milestone.submissionNotes || 'No notes provided'}
+    Submission URL: ${milestone.submissionUrl || 'No URL provided'}
 
     Based on the milestone description and its current status, assess whether the work appears complete.
 
