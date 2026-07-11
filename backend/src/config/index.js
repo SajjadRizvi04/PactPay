@@ -9,7 +9,8 @@ const envSchema = z.object({
     PORT: z.string().default('3000'),
     RAZORPAY_KEY_ID: z.string(),
     RAZORPAY_KEY_SECRET: z.string(),
-    GEMINI_API_KEY: z.string()
+    GEMINI_API_KEY: z.string(),
+    REDIS_URL: z.string()
 })
 
 const parsed = envSchema.safeParse(process.env)
