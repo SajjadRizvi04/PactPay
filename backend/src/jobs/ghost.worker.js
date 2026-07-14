@@ -3,6 +3,9 @@ import { connection } from "./connection.js"
 import prisma from '../db/client.js'
 import { ghostQueue } from './queues.js'
 import { v4 as uuidv4 } from 'uuid'
+import { sendToDeadLetter
+
+ } from "./deadletter.worker.js"
 
 const GHOST_THRESHOLD_DAYS = 14
 
@@ -102,8 +105,9 @@ worker.on('completed', (job)=> {
     console.log(`Ghost job ${job.id} completed`)
 })
 
-worker.on('failed', (job,error)=> {
+worker.on('failed', async (job,error)=> {
     console.error(`Ghost job ${job.id} failed:`, error.message)
+    await sendToDeadLetter('ghost', job.id, error, job.data) 
 })
 
 export const scheduleGhostCheck = async ()=> {

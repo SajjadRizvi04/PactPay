@@ -1,5 +1,6 @@
 import prisma from '../../db/client.js'
 import { transitionContract, transitionMilestone } from './contract.statemachine.js'
+import { aiQueue } from '../../jobs/queues.js';
 
 export const createContract = async (clientId,data) => {
     const {title, description, totalAmount,freelancerId,milestones} = data;
@@ -88,4 +89,7 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
             submissionUrl
         }
     })
+    await aiQueue.add('assess-milestone', { contractId, milestoneId })
+
+    return upDateMilestonedone
 } 
