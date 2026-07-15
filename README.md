@@ -32,6 +32,16 @@ The most important design decision I made: **the AI never directly triggers any 
 
 ---
 
+## Documentation
+
+The backend is documented in detail in the `/docs` folder.
+
+- [Architecture](./docs/ARCHITECTURE.md) — folder structure, request lifecycle, three circle model
+- [Payment Flow](./docs/PAYMENT_FLOW.md) — escrow flow, append-only ledger, idempotency, ACID compliance
+- [AI Design](./docs/AI_DESIGN.md) — why AI never triggers payments, verdict processor, confidence threshold
+- [State Machine](./docs/STATE_MACHINE.md) — valid contract and milestone transitions
+- [Ghost Detection](./docs/GHOST_DETECTION.md) — 14 day rules, auto-release, idempotency
+
 ## Project Structure
 
 ```
