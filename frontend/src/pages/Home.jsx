@@ -4,7 +4,11 @@ import React from 'react'
 import { Handshake, Lock, Bot, CheckCircle, Banknote, Ghost, BookOpen, Scale, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faGithub,
+  faLinkedin,
+} from "@fortawesome/free-brands-svg-icons";
 
 const Home = () => {
   const features = [
@@ -142,40 +146,12 @@ const Home = () => {
 
         </div>
       </section>
+
+
       {/* Features */}
-      {/* <section className='px-8 py-16 bg-slate-50'>
-        <h2 className='text-3xl font-bold text-slate-900 text-center mb-12'>Why PayPact</h2>
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto'>
-          <Card>
-            <CardContent className='pt-6 flex flex-col gap-2'>
-              <h3 className='font-semibold text-slate-900'>AI-Powered Milestone Verification</h3>
-              <p className='text-slate-500 text-sm'>Automatically analyzes submitted work to verify progress against agreed milestones before payment is released, reducing disputes and manual reviews.</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className='pt-6 flex flex-col gap-2'>
-              <h3 className='font-semibold text-slate-900'>Secure Escrow Payments</h3>
-              <p className='text-slate-500 text-sm'>Client funds are securely held in escrow and released only after milestone approval, protecting both freelancers and clients.</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className='pt-6 flex flex-col gap-2'>
-              <h3 className='font-semibold text-slate-900'>Smart Contracts & Milestone Tracking</h3>
-              <p className='text-slate-500 text-sm'>Create projects with custom milestones, deadlines, and payment schedules. Both parties can monitor progress through a centralized dashboard.</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className='pt-6 flex flex-col gap-2'>
-              <h3 className='font-semibold text-slate-900'>Transparent Dispute Resolution</h3>
-              <p className='text-slate-500 text-sm'>If a disagreement occurs, PayPact provides AI-generated project insights, submission history, and activity logs to help resolve disputes fairly.</p>
-            </CardContent>
-          </Card>
-        </div>
-      </section> */}
       <section className='bg-slate-50 py-24 px-8'>
         <div className='max-w-7xl mx-auto flex flex-col gap-12'>
 
-          {/* Heading */}
           <div className='text-center flex flex-col gap-3'>
             <h2 className='text-3xl font-bold text-slate-900'>Why PayPact</h2>
             <p className='text-slate-500 max-w-xl mx-auto text-sm'>
@@ -183,7 +159,6 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {features.map((feature, i) => (
               <div
@@ -203,6 +178,28 @@ const Home = () => {
 
         </div>
       </section>
+      {/* Footer */}
+      <footer className='bg-primary border-t border-white/10 py-4 px-8'>
+        <div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4'>
+
+          <p className='text-white/40 text-sm'>
+            © {new Date().getFullYear()} PayPact.
+          </p>
+          <p className='text-white'>
+            Built by <span className='text-accent'>Sajjad Ali</span>
+          </p>
+
+          <div className='flex items-center gap-3'>
+            <a href='https://github.com/SajjadRizvi04' target='_blank' className='w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition'>
+              <FontAwesomeIcon color='white' icon={faGithub} />
+            </a>
+            <a href='https://www.linkedin.com/in/sajjad-ali-42a27028b/' target='_blank' className='w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition'>
+            <FontAwesomeIcon color='white' icon={faLinkedin} />
+            </a>
+          </div>
+
+        </div>
+      </footer>
     </div>
   )
 }
