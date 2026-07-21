@@ -1,13 +1,19 @@
 
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
+import LogIn from './pages/auth/Login'
 
 function App() {
   
 
   return (
     <>
-      <Home/>
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/login' element={<LogIn/>}/>
+      </Routes>
+      
     </>
   )
 }
