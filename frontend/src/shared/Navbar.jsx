@@ -80,7 +80,7 @@ export default function Navbar() {
               </Button>
               <Button
                 className="rounded-xl bg-white px-6 text-primary hover:bg-slate-100"
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/signup')}
               >
                 Get Started
               </Button>

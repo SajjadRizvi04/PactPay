@@ -16,7 +16,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     setError('')
-    setLoading = true
+    setLoading(true)
     try {
         const {data} = await axios.post('http://localhost:5000/api/auth/login', {email,password})
         localStorage.setItem('token', data.token)
