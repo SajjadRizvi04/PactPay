@@ -1,4 +1,4 @@
-import { createContract, getContract, updateContractStatus, submitMileStone } from "./contract.service.js";
+import { createContract, getContract,getContracts, updateContractStatus, submitMileStone } from "./contract.service.js";
 
 export const create = async (req,res)=> {
     try {
@@ -15,6 +15,15 @@ export const get = async (req,res)=> {
         res.status(201).json(contract)
     } catch (error) {
         res.status(400).json({error: error.message})
+    }
+}
+export const getAll = async (req,res)=> {
+    try {
+        const contracts = await getContracts(req.user.id)
+        res.status(200).json(contracts)
+    } catch (error) {
+        res.status(400).json({error: error.message})
+        
     }
 }
 

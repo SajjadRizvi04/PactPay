@@ -85,7 +85,7 @@ const Home = () => {
             Freelance work, without the trust issues
           </h1>
           <p className='text-lg text-slate-500'>
-            PayPact holds funds in escrow and uses AI to assess milestone completion before any payment is released. Clients and freelancers both stay protected.
+            PactPay holds funds in escrow and uses AI to assess milestone completion before any payment is released. Clients and freelancers both stay protected.
           </p>
           <div className='flex gap-3'>
             <Button size='lg' onClick={() => navigate('/register')}>Start for free</Button>
@@ -96,7 +96,7 @@ const Home = () => {
         <div className='w-full max-w-lg'>
           <img
             src='/src/assets/hero.png'
-            alt='PayPact dashboard'
+            alt='PactPay dashboard'
             className='w-full rounded-2xl shadow-2xl border border-slate-200'
           />
         </div>
@@ -153,7 +153,7 @@ const Home = () => {
         <div className='max-w-7xl mx-auto flex flex-col gap-12'>
 
           <div className='text-center flex flex-col gap-3'>
-            <h2 className='text-3xl font-bold text-slate-900'>Why PayPact</h2>
+            <h2 className='text-3xl font-bold text-slate-900'>Why PactPay</h2>
             <p className='text-slate-500 max-w-xl mx-auto text-sm'>
               Built for freelancers and clients who want to work together without the usual trust problems.
             </p>
@@ -183,7 +183,7 @@ const Home = () => {
         <div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4'>
 
           <p className='text-white/40 text-sm'>
-            © {new Date().getFullYear()} PayPact.
+            © {new Date().getFullYear()} PactPay.
           </p>
           <p className='text-white'>
             Built by <span className='text-accent'>Sajjad Ali</span>

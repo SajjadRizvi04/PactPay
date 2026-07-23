@@ -36,7 +36,7 @@ const Login = () => {
         <Card className='w-full max-w-md'>
           <CardHeader>
             <CardTitle>Welcome back</CardTitle>
-            <CardDescription>Login to your PayPact account</CardDescription>
+            <CardDescription>Login to your PactPay account</CardDescription>
           </CardHeader>
           <CardContent className='flex flex-col gap-4'>
             {error && (

@@ -6,7 +6,7 @@ I want to document how I thought about structuring this project because it took 
 
 ## The Three Circle Model
 
-When I started building PayPact I kept putting code in the wrong place. Business logic in routes, database calls in controllers, that kind of thing. The mental model that fixed this was thinking about three circles:
+When I started building PactPay I kept putting code in the wrong place. Business logic in routes, database calls in controllers, that kind of thing. The mental model that fixed this was thinking about three circles:
 
 ```
 ┌─────────────────────────────────────┐

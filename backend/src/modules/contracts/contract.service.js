@@ -30,6 +30,19 @@ export const createContract = async (clientId,data) => {
     return contract
 }
 
+export const getContracts = async (userId) => {
+    return await prisma.contract.findMany({
+        where:{
+            OR: [
+                {clientId: userId},
+                {freelancerId: userId}
+            ]
+        },
+        include: {milestones: true},
+        orderBy: {createdAt: 'desc'}
+    })
+}
+
 export const getContract = async (contractId, userId) => {
     const contract = await prisma.contract.findUnique({
         where: {

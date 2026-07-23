@@ -1,6 +1,6 @@
 # State Machine
 
-Every contract and milestone in PayPact has a status that follows strict transition rules. You can't jump from `DRAFT` to `COMPLETED`. You can't reopen a `CANCELLED` contract. These rules are enforced in `contract.statemachine.js` before any database write happens.
+Every contract and milestone in PactPay has a status that follows strict transition rules. You can't jump from `DRAFT` to `COMPLETED`. You can't reopen a `CANCELLED` contract. These rules are enforced in `contract.statemachine.js` before any database write happens.
 
 ---
 

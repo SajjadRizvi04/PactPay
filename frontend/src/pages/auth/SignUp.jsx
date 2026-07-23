@@ -42,7 +42,7 @@ const Register = () => {
         <Card className='w-full max-w-md'>
           <CardHeader>
             <CardTitle>Create an account</CardTitle>
-            <CardDescription>Join PayPact as a client or freelancer</CardDescription>
+            <CardDescription>Join PactPay as a client or freelancer</CardDescription>
           </CardHeader>
           <CardContent className='flex flex-col gap-4'>
             {error && (

@@ -1,7 +1,7 @@
-# PayPact
+# PactPay
 
 An AI-powered escrow platform for freelancers and clients.
-The basic idea is that freelancers and clients often don't trust each other when working remotely. Clients worry the freelancer will take the money and disappear. Freelancers worry the client will reject perfectly good work and refuse to pay. PayPact tries to solve this by holding funds in escrow and using AI to assess whether milestone work is actually complete before payment is released.
+The basic idea is that freelancers and clients often don't trust each other when working remotely. Clients worry the freelancer will take the money and disappear. Freelancers worry the client will reject perfectly good work and refuse to pay. PactPay tries to solve this by holding funds in escrow and using AI to assess whether milestone work is actually complete before payment is released.
 
 ---
 
@@ -107,8 +107,8 @@ Every transaction row has a unique idempotency key. If a payment request is retr
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/paypact.git
-cd paypact/backend
+git clone https://github.com/yourusername/PactPay.git
+cd PactPay/backend
 
 # Install dependencies
 npm install
@@ -174,7 +174,7 @@ PATCH /api/disputes/:id/resolve
 
 ## Required Environment variables 
     PORT = your_port_number
-    DATABASE_URL="postgresql://username:password@localhost:5432/paypact"
+    DATABASE_URL="postgresql://username:password@localhost:5432/PactPay"
     JWT_SECRET = "your_jwt_secret_key"
     RAZORPAY_KEY_ID= "your_razorpay_key_id"
     RAZORPAY_KEY_SECRET= "your_razorpay_key_secret"
