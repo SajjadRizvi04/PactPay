@@ -46,12 +46,6 @@ const Dashboard = () => {
                 : 'View your active contracts and submit milestone work'}
             </p>
           </div>
-          {user?.role === 'CLIENT' && (
-            <Button onClick={() => navigate('/contracts/new')}>
-              <Plus className='w-4 h-4 mr-2' />
-              New Contract
-            </Button>
-          )}
         </div>
 
         {/* Error */}
