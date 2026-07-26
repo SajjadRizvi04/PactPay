@@ -6,6 +6,7 @@ import LogIn from './pages/auth/Login'
 import SignUp from './pages/auth/SignUp'
 import Dashboard from './pages/Dashboard'
 import ContractNew from './pages/ContractNew'
+import ContractDetail from './pages/ContractDetail'
 
 function App() {
   
@@ -17,7 +18,8 @@ function App() {
         <Route path='/login' element={<LogIn/>}/>
         <Route path='/signup' element={<SignUp/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
-        <Route path='contracts/new' element={<ContractNew/>}/>
+        <Route path='/contracts/new' element={<ContractNew/>}/>
+        <Route path= '/contracts/:id' element={<ContractDetail/>}/>
       </Routes>
       
     </>

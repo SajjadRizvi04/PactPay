@@ -26,7 +26,7 @@ const Sidebar = ({ user }) => {
         {[
           { label: 'Dashboard', icon: <LayoutDashboard className='w-4 h-4' />, path: '/dashboard' },
           { label: 'Contracts', icon: <FileText className='w-4 h-4' />, path: '/contracts' },
-          { label: 'Disputes', icon: <AlertCircle className='w-4 h-4' />, path: '/disputes' },
+          { label: 'Disputes', icon: <AlertCircle className='w-4 h-4' />, path: '/dashboard' },
         ].map(item => (
           <button
             key={item.label}

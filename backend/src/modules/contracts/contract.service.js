@@ -48,7 +48,12 @@ export const getContract = async (contractId, userId) => {
         where: {
             id: contractId
         },
-        include: {milestones:true, transactions:true }
+        include: {
+            milestones:true, 
+            transactions:true,
+            aiVerdicts: true,
+            disputes:true 
+        }
     })
     if(!contract) {
         throw new Error('Contract not found')
