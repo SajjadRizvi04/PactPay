@@ -7,6 +7,7 @@ import SignUp from './pages/auth/SignUp'
 import Dashboard from './pages/Dashboard'
 import ContractNew from './pages/ContractNew'
 import ContractDetail from './pages/ContractDetail'
+import MilestoneDetail from './pages/MilestoneDetail'
 
 function App() {
   
@@ -20,6 +21,7 @@ function App() {
         <Route path='/dashboard' element={<Dashboard/>}/>
         <Route path='/contracts/new' element={<ContractNew/>}/>
         <Route path= '/contracts/:id' element={<ContractDetail/>}/>
+        <Route path='/contracts/:id/milestones/:milestoneId' element={<MilestoneDetail />} />
       </Routes>
       
     </>
