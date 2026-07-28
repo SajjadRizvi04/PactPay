@@ -1,4 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Sidebar from './dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,14 +11,74 @@ const MilestoneDetail = () => {
   const { id, milestoneId } = useParams()
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
+  const token = localStorage.getItem('token')
 
-  // mock data
-  const milestone = {
-    title: 'Design mockups',
-    description: 'Create wireframes and design mockups for all 5 pages',
-    amount: 8000,
-    dueDate: '2026-08-01',
-    status: 'PENDING'
+  const [milestone, setMilestone] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [submissionNotes, setSubmissionNotes] = useState('')
+  const [submissionUrl, setSubmissionUrl] = useState('')
+
+  useEffect(() => {
+    const fetchMilestone = async () => {
+      try {
+        const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const found = data.milestones.find(m => m.id === milestoneId)
+        if (!found) throw new Error('Milestone not found')
+        setMilestone(found)
+      } catch (err) {
+        setError(err.response?.data?.error || err.message || 'Failed to load milestone')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchMilestone()
+  }, [id, milestoneId])
+
+  const handleSubmit = async () => {
+    if (!submissionNotes) {
+      setError('Please add submission notes')
+      return
+    }
+    setError('')
+    setSubmitting(true)
+    try {
+      await axios.post(
+        `http://localhost:5000/api/contracts/${id}/milestones/${milestoneId}/submit`,
+        { submissionNotes, submissionUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      navigate(`/contracts/${id}`)
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to submit milestone')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className='min-h-screen bg-slate-50 flex'>
+        <Sidebar user={user} />
+        <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+          <p className='text-slate-400'>Loading milestone...</p>
+        </main>
+      </div>
+    )
+  }
+
+  if (error && !milestone) {
+    return (
+      <div className='min-h-screen bg-slate-50 flex'>
+        <Sidebar user={user} />
+        <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+          <p className='text-red-400'>{error}</p>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -61,6 +123,13 @@ const MilestoneDetail = () => {
             </div>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div className='bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg'>
+              {error}
+            </div>
+          )}
+
           {/* Submission Form */}
           <div className='bg-white rounded-2xl p-6 flex flex-col gap-4'>
             <h2 className='font-semibold text-slate-900'>Your Submission</h2>
@@ -70,6 +139,8 @@ const MilestoneDetail = () => {
               <Textarea
                 placeholder='Describe what you completed, any decisions you made, and what the client should check...'
                 rows={5}
+                value={submissionNotes}
+                onChange={e => setSubmissionNotes(e.target.value)}
               />
             </div>
 
@@ -78,6 +149,8 @@ const MilestoneDetail = () => {
               <Input
                 type='url'
                 placeholder='https://github.com/your-repo or https://figma.com/file/...'
+                value={submissionUrl}
+                onChange={e => setSubmissionUrl(e.target.value)}
               />
               <p className='text-slate-400 text-xs mt-1'>Link to your GitHub repo, Figma file, deployed app, or any relevant resource</p>
             </div>
@@ -88,8 +161,8 @@ const MilestoneDetail = () => {
             <Button variant='outline' onClick={() => navigate(`/contracts/${id}`)}>
               Cancel
             </Button>
-            <Button>
-              Submit for Review
+            <Button onClick={handleSubmit} disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit for Review'}
             </Button>
           </div>
 
