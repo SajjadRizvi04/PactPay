@@ -5,26 +5,27 @@ import Sidebar from './dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
 
 const ContractPayment = () => {
+
   const { id } = useParams()
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
   const [contract, setContract] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [paying, setPaying] = useState(false)
+  const [loading, setLoading] = useState(true);
+  const [paying, setPaying] = useState(false);
   const [error, setError] = useState('')
 
-  // Step 1 — fetch contract details so we know the amount to charge
   useEffect(() => {
     const fetchContract = async () => {
       try {
         const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         })
-        setContract(data)
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to load contract')
+      } catch (error) {
+        setError(error.response?.data?.error || 'Failed to load contract, try again')
       } finally {
         setLoading(false)
       }
@@ -32,9 +33,7 @@ const ContractPayment = () => {
     fetchContract()
   }, [id])
 
-  // Step 2 — load Razorpay script from CDN
-  // We do this dynamically because Razorpay is not an npm package
-  // It needs to be loaded as a script tag at runtime
+
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement('script')
@@ -45,48 +44,36 @@ const ContractPayment = () => {
     })
   }
 
-  // Step 3 — main payment handler
   const handlePayment = async () => {
     setError('')
     setPaying(true)
 
     try {
-      // load the razorpay script first
-      // if it fails we stop here
       const loaded = await loadRazorpay()
       if (!loaded) {
-        setError('Failed to load payment gateway. Check your internet connection.')
+        setError('Failed to load Payment Gateway, Check your internet connection')
         setPaying(false)
         return
       }
 
-      // call your backend to create a Razorpay order
-      // backend returns { id, amount, currency } from Razorpay
-      const { data: order } = await axios.post(
-        'http://localhost:5000/api/payments/fund',
-        {
-          contractId: id,
-          amount: Number(contract.totalAmount)
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      const { data: order } = await axios.post('http://localhost:5000/api/payments/fund', {
+        contractId: id,
+        amount: Number(contract.totalAmount)
 
-      // configure the Razorpay popup
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: order.amount,       // already in paise from backend
+        amount: order.amount,
         currency: order.currency,
         name: 'PayPact',
         description: contract.title,
         order_id: order.id,
 
-        // this function runs automatically when payment succeeds
-        // Razorpay passes back three values needed for verification
         handler: async (response) => {
           try {
-            // send the three values to your backend for verification
-            // backend checks the HMAC signature to confirm payment is real
-            // if valid, writes ESCROW_FUNDED to ledger and sets contract to ACTIVE
             await axios.post(
               'http://localhost:5000/api/payments/verify',
               {
@@ -98,40 +85,36 @@ const ContractPayment = () => {
               },
               { headers: { Authorization: `Bearer ${token}` } }
             )
-            // payment verified — go back to contract page
             navigate(`/contracts/${id}`)
           } catch (err) {
             setError(err.response?.data?.error || 'Payment verification failed')
             setPaying(false)
           }
         },
-
-        // this runs if user closes the popup without paying
         modal: {
           ondismiss: () => {
             setPaying(false)
           }
         },
 
-        // pre-fill user details in the popup
         prefill: {
           name: user?.name,
           email: user?.email
         },
 
         theme: {
-          color: '#0f172a'  // slate-900 to match your UI
+          color: '#0f172a'
         }
       }
 
-      // create the Razorpay instance and open the popup
       const rzp = new window.Razorpay(options)
       rzp.open()
 
-    } catch (err) {
-      setError(err.response?.data?.error || 'Something went wrong')
+    } catch (error) {
+      setError(error.response?.data?.error)
       setPaying(false)
     }
+
   }
 
   if (loading) {
