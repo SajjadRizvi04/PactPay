@@ -14,7 +14,7 @@ const ContractPayment = () => {
   const [contract, setContract] = useState(null)
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [error, setError] = useState('')
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchContract = async () => {
