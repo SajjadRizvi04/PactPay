@@ -1,4 +1,4 @@
-import { createDispute, getDispute, resolveDispute } from './dispute.service.js'
+import { createDispute, getDispute, getUserDisputes, resolveDispute } from './dispute.service.js'
 
 export const create = async (req,res)=> {
     try {

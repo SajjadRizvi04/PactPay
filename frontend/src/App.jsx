@@ -10,6 +10,8 @@ import ContractDetail from './pages/ContractDetail'
 import MilestoneDetail from './pages/MilestoneDetail'
 import ContractPayment from './pages/ContractPayment'
 import DisputeDetail from './pages/DisputeDetail'
+import Disputes from './pages/Disputes'
+import Contracts from './pages/Contracts'
 
 function App() {
   
@@ -26,6 +28,8 @@ function App() {
         <Route path='/contracts/:id/milestones/:milestoneId' element={<MilestoneDetail />} />
         <Route path='/contracts/:id/payment' element={<ContractPayment />} />
         <Route path='/disputes/:id' element={<DisputeDetail />} />
+        <Route path='/disputes' element={<Disputes/>}/>
+        <Route path='/contracts' element={<Contracts/>}/>
       </Routes>
       
     </>
