@@ -44,6 +44,20 @@ export const getDispute = async (disputeId, userId) => {
     
     return dispute
 }
+export const getUserDisputes = async (userId) => {
+  return await prisma.dispute.findMany({
+    where: {
+      contract: {
+        OR: [
+          { clientId: userId },
+          { freelancerId: userId }
+        ]
+      }
+    },
+    include: { contract: true },
+    orderBy: { createdAt: 'desc' }
+  })
+}
 
 export const resolveDispute = async(disputeId,userId, {resolution,notes}) => {
 

@@ -8,6 +8,14 @@ export const create = async (req,res)=> {
         res.status(400).json({error: error.message})
     }
 }
+export const getAll = async (req, res) => {
+  try {
+    const disputes = await getUserDisputes(req.user.id)
+    res.status(200).json(disputes)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
 
 export const get = async (req,res) => {
     try {
