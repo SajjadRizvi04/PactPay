@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus, Trash2 } from 'lucide-react'
+import { Menu, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -12,21 +12,22 @@ const ContractNew = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
-  const [loading,setLoading] = useState(false)
-  const [title,setTitle] = useState('')
-  const [description,setDescription] = useState('')
-  const [totalAmount,setTotalAmount] = useState('')
-  const [freelancer,setFreelancer] = useState('')
-  const [error,setError] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [totalAmount, setTotalAmount] = useState('')
+  const [freelancer, setFreelancer] = useState('')
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const [milestones,setMilestones] = useState([
+  const [milestones, setMilestones] = useState([
     { title: '', description: '', amount: '', dueDate: '' }
   ])
   const addMilestone = () => {
     setMilestones([...milestones, { title: '', description: '', amount: '', dueDate: '' }])
   }
-   const removeMilestone = (index) => {
+  const removeMilestone = (index) => {
     if (milestones.length === 1) return
     setMilestones(milestones.filter((_, i) => i !== index))
   }
@@ -39,10 +40,10 @@ const ContractNew = () => {
   const totalMatches = milestonesTotal === Number(totalAmount)
 
 
-  const handleSubmit = async ()=> {
+  const handleSubmit = async () => {
     setError('')
 
-    if(!title || !description || !totalAmount || !freelancer) {
+    if (!title || !description || !totalAmount || !freelancer) {
       setError('Please fill in all contract fields')
       return
     }
@@ -61,21 +62,21 @@ const ContractNew = () => {
 
     setLoading(true)
     try {
-      const {data} = await axios.post('http://localhost:5000/api/contracts/', {
-            title,
-            description,
-            totalAmount,
-            freelancerId : freelancer,
-            milestones: milestones.map( m=>({
-              title: m.title,
-              description: m.description,
-              amount: Number(m.amount),
-              dueDate: new Date(m.dueDate).toISOString()
-            }))
+      const { data } = await axios.post('http://localhost:5000/api/contracts/', {
+        title,
+        description,
+        totalAmount,
+        freelancerId: freelancer,
+        milestones: milestones.map(m => ({
+          title: m.title,
+          description: m.description,
+          amount: Number(m.amount),
+          dueDate: new Date(m.dueDate).toISOString()
+        }))
       },
-      {headers: {Authorization: `Bearer ${token}`} }
-    )
-    navigate(`/contracts/${data.id}`)
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      navigate(`/contracts/${data.id}`)
     } catch (error) {
       setError(error.response?.data?.error || 'Something went wrong')
     } finally {
@@ -84,11 +85,19 @@ const ContractNew = () => {
   }
   return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8 max-w-3xl mx-auto'>
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8 max-w-3xl mx-auto'>
 
         {/* Header */}
+
         <div className='mb-8'>
+          {/* Hamburger */}
+          <button
+            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className='w-5 h-5 text-slate-600' />
+          </button>
           <h1 className='text-2xl font-bold text-slate-900'>New Contract</h1>
           <p className='text-slate-500 text-sm mt-1'>Fill in the details and define your milestones</p>
         </div>
@@ -108,7 +117,7 @@ const ContractNew = () => {
 
             <div className='flex flex-col gap-1'>
               <Label>Title</Label>
-              <Input placeholder='Build a portfolio website' value={title} onChange={e=>setTitle(e.target.value)} />
+              <Input placeholder='Build a portfolio website' value={title} onChange={e => setTitle(e.target.value)} />
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -117,27 +126,27 @@ const ContractNew = () => {
                 placeholder='Describe the project scope and deliverables...'
                 rows={3}
                 value={description}
-                onChange={e=>setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
 
               />
             </div>
 
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
               <div className='flex flex-col gap-1'>
                 <Label>Total Amount (₹)</Label>
-                <Input 
-                type='number' 
-                placeholder='10000' 
-                value={totalAmount}
-                onChange={e=>setTotalAmount(Number(e.target.value))}
+                <Input
+                  type='number'
+                  placeholder='10000'
+                  value={totalAmount}
+                  onChange={e => setTotalAmount(Number(e.target.value))}
                 />
               </div>
               <div className='flex flex-col gap-1'>
                 <Label>Freelancer ID</Label>
-                <Input 
-                placeholder='Freelancer user ID'
-                value={freelancer}
-                onChange={e=>setFreelancer(e.target.value)}
+                <Input
+                  placeholder='Freelancer user ID'
+                  value={freelancer}
+                  onChange={e => setFreelancer(e.target.value)}
                 />
               </div>
             </div>
@@ -150,11 +159,11 @@ const ContractNew = () => {
                 <h2 className='font-semibold text-slate-900'>Milestones</h2>
                 <p className='text-xs text-slate-400 mt-0.5'>Amounts must add up to total contract amount</p>
                 Total: ₹{milestonesTotal.toLocaleString()}
-                  {totalAmount && (
-                    <span className={totalMatches ? 'text-green-500 ml-2' : 'text-red-400 ml-2'}>
-                      {totalMatches ? 'Matches total' : `₹${Number(totalAmount).toLocaleString()} required`}
-                    </span>
-                  )}
+                {totalAmount && (
+                  <span className={totalMatches ? 'text-green-500 ml-2' : 'text-red-400 ml-2'}>
+                    {totalMatches ? 'Matches total' : `₹${Number(totalAmount).toLocaleString()} required`}
+                  </span>
+                )}
               </div>
               <Button size='sm' variant='outline' onClick={addMilestone}>
                 <Plus className='w-4 h-4 mr-1' />
@@ -169,19 +178,19 @@ const ContractNew = () => {
                     <p className='text-sm font-medium text-slate-700'>Milestone {index + 1}</p>
                     {milestones.length > 1 && (
                       <button onClick={() => removeMilestone(index)}>
-                      <Trash2 className='w-4 h-4 text-slate-400 hover:text-red-400 transition' />
-                    </button>
+                        <Trash2 className='w-4 h-4 text-slate-400 hover:text-red-400 transition' />
+                      </button>
 
                     )}
-                    
+
                   </div>
 
                   <div className='flex flex-col gap-1'>
                     <Label>Title</Label>
-                    <Input 
-                    placeholder='Design mockups'
-                    value={milestone.title}
-                    onChange={e => updateMilestone(index, 'title', e.target.value)}
+                    <Input
+                      placeholder='Design mockups'
+                      value={milestone.title}
+                      onChange={e => updateMilestone(index, 'title', e.target.value)}
                     />
                   </div>
 
@@ -191,26 +200,26 @@ const ContractNew = () => {
                       placeholder='What needs to be delivered...'
                       rows={2}
                       value={milestone.description}
-                      onChange={e=> updateMilestone(index, 'description', e.target.value)}
+                      onChange={e => updateMilestone(index, 'description', e.target.value)}
                     />
                   </div>
 
-                  <div className='grid grid-cols-2 gap-3'>
+                  <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
                     <div className='flex flex-col gap-1'>
                       <Label>Amount (₹)</Label>
                       <Input
-                       type='number' 
-                       placeholder='5000'
-                       value={milestone.amount}
-                       onChange={e=> updateMilestone(index, 'amount', e.target.value)}
-                       />
+                        type='number'
+                        placeholder='5000'
+                        value={milestone.amount}
+                        onChange={e => updateMilestone(index, 'amount', e.target.value)}
+                      />
                     </div>
                     <div className='flex flex-col gap-1'>
                       <Label>Due Date</Label>
-                      <Input 
-                      type='date'
-                      value={milestone.dueDate}
-                      onChange={e=> updateMilestone(index, 'dueDate', e.target.value)}
+                      <Input
+                        type='date'
+                        value={milestone.dueDate}
+                        onChange={e => updateMilestone(index, 'dueDate', e.target.value)}
                       />
                     </div>
                   </div>
@@ -221,7 +230,7 @@ const ContractNew = () => {
 
           {/* Actions */}
           <div className='flex items-center justify-end gap-3 pb-8'>
-            <Button variant='outline' onClick={()=>navigate('/dashboard')}>Cancel</Button>
+            <Button variant='outline' onClick={() => navigate('/dashboard')}>Cancel</Button>
             <Button onClick={handleSubmit} disabled={loading}>
               {loading ? 'Creating...' : 'Create Contract'}
             </Button>

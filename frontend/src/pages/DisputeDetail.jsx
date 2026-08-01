@@ -1,10 +1,10 @@
-import { useParams, useNavigate} from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Sidebar from './dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Menu } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
@@ -21,6 +21,7 @@ const DisputeDetail = () => {
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [dispute, setDispute] = useState()
@@ -57,8 +58,15 @@ const DisputeDetail = () => {
   }
   if (loading) return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8 flex items-center justify-center'>
+        {/* Hamburger */}
+        <button
+          className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className='w-5 h-5 text-slate-600' />
+        </button>
         <p className='text-slate-400'>Loading...</p>
       </main>
     </div>
@@ -66,9 +74,15 @@ const DisputeDetail = () => {
 
   return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8 max-w-2xl'>
-
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8 max-w-2xl'>
+        {/* Hamburger */}
+        <button
+          className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className='w-5 h-5 text-slate-600' />
+        </button>
         {/* Header */}
         <div className='mb-8 flex flex-col gap-2'>
           <button

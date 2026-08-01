@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Menu } from 'lucide-react'
 
 const MilestoneDetail = () => {
   const { id, milestoneId } = useParams()
@@ -13,6 +14,7 @@ const MilestoneDetail = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [milestone, setMilestone] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -62,8 +64,15 @@ const MilestoneDetail = () => {
   if (loading) {
     return (
       <div className='min-h-screen bg-slate-50 flex'>
-        <Sidebar user={user} />
-        <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+        <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <main className='flex-1  px-8 py-8 flex items-center justify-center'>
+          {/* Hamburger */}
+          <button
+            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className='w-5 h-5 text-slate-600' />
+          </button>
           <p className='text-slate-400'>Loading milestone...</p>
         </main>
       </div>
@@ -73,8 +82,15 @@ const MilestoneDetail = () => {
   if (error && !milestone) {
     return (
       <div className='min-h-screen bg-slate-50 flex'>
-        <Sidebar user={user} />
-        <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+        <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <main className='flex-1  px-8 py-8 flex items-center justify-center'>
+          {/* Hamburger */}
+          <button
+            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className='w-5 h-5 text-slate-600' />
+          </button>
           <p className='text-red-400'>{error}</p>
         </main>
       </div>
@@ -83,9 +99,15 @@ const MilestoneDetail = () => {
 
   return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8 max-w-2xl'>
-
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8 max-w-2xl'>
+        {/* Hamburger */}
+        <button
+          className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className='w-5 h-5 text-slate-600' />
+        </button>
         {/* Header */}
         <div className='mb-8 flex flex-col gap-2'>
           <button

@@ -28,7 +28,7 @@ const ContractsList = ({ contracts, loading, role }) => {
           {role === 'CLIENT' ? 'Your Contracts' : 'Assigned Contracts'}
         </h2>
         {role === 'CLIENT' && (
-          <Button size='sm' variant='outline' onClick={() => navigate('/contracts/new')}>
+          <Button size='sm'  onClick={() => navigate('/contracts/new')}>
             New Contract
           </Button>
         )}

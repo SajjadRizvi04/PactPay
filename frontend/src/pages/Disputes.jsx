@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Sidebar from './dashboard/Sidebar'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Menu } from 'lucide-react'
 
 const statusColors = {
   OPEN: 'text-red-500',
@@ -16,6 +16,7 @@ const Disputes = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [disputes, setDisputes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -38,9 +39,15 @@ const Disputes = () => {
 
   return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8'>
-
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8'>
+        {/* Hamburger */}
+        <button
+          className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className='w-5 h-5 text-slate-600' />
+        </button>
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-2xl font-bold text-slate-900'>Disputes</h1>

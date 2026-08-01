@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../pages/dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
-import { Clock, CheckCircle, AlertCircle, Circle } from 'lucide-react'
+import { Clock, CheckCircle, AlertCircle, Circle, Menu } from 'lucide-react'
 
 const statusColors = {
     DRAFT: 'bg-slate-100 text-slate-600',
@@ -34,6 +34,7 @@ const ContractDetail = () => {
     const user = JSON.parse(localStorage.getItem('user'))
     const token = localStorage.getItem('token')
 
+    const [sidebarOpen, setSidebarOpen] = useState(false)
     const [contract, setContract] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -100,8 +101,8 @@ const ContractDetail = () => {
     if (loading) {
         return (
             <div className='min-h-screen bg-slate-50 flex'>
-                <Sidebar user={user} />
-                <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+                <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <main className='flex-1  px-8 py-8 flex items-center justify-center'>
                     <p className='text-slate-400'>Loading contract...</p>
                 </main>
             </div>
@@ -111,8 +112,8 @@ const ContractDetail = () => {
     if (error) {
         return (
             <div className='min-h-screen bg-slate-50 flex'>
-                <Sidebar user={user} />
-                <main className='flex-1 ml-64 px-8 py-8 flex items-center justify-center'>
+                <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <main className='flex-1  px-8 py-8 flex items-center justify-center'>
                     <p className='text-red-400'>{error}</p>
                 </main>
             </div>
@@ -121,12 +122,18 @@ const ContractDetail = () => {
 
     return (
         <div className='min-h-screen bg-slate-50 flex'>
-            <Sidebar user={user} />
-            <main className='flex-1 ml-64 px-8 py-8'>
+            <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <main className='flex-1  px-8 py-8'>
 
                 {/* Header */}
                 <div className='flex items-start justify-between mb-8'>
                     <div className='flex flex-col gap-2'>
+                        <button
+                            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200'
+                            onClick={() => setSidebarOpen(true)}
+                        >
+                            <Menu className='w-5 h-5 text-slate-600' />
+                        </button>
                         <button
                             onClick={() => navigate('/dashboard')}
                             className='text-slate-400 text-sm hover:text-slate-600 transition w-fit'
@@ -141,10 +148,10 @@ const ContractDetail = () => {
                     </span>
                 </div>
 
-                <div className='grid grid-cols-3 gap-6'>
+                <div className='grid lg:grid-cols-3 grid-cols-1 gap-6'>
 
                     {/* Left — Milestones */}
-                    <div className='col-span-2 flex flex-col gap-4'>
+                    <div className='lg:col-span-2 flex flex-col gap-4'>
                         <h2 className='font-semibold text-slate-900'>Milestones</h2>
 
                         {contract.milestones.map((milestone) => {
@@ -224,11 +231,11 @@ const ContractDetail = () => {
                                                 >
                                                     {actionLoading ? 'Processing...' : 'Release Payment'}
                                                 </Button>
-                                                <Button 
-                                                size='sm' 
-                                                variant='outline'
-                                                disabled={actionLoading}
-                                                onClick={()=> handleRequestChanges(milestone.id)}
+                                                <Button
+                                                    size='sm'
+                                                    variant='outline'
+                                                    disabled={actionLoading}
+                                                    onClick={() => handleRequestChanges(milestone.id)}
                                                 >
                                                     Request Changes
                                                 </Button>

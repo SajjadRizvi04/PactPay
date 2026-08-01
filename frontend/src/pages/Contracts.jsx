@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Sidebar from './dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Menu, Plus } from 'lucide-react'
+
 
 const statusColors = {
   DRAFT: 'text-slate-400',
@@ -16,6 +17,7 @@ const statusColors = {
 
 const Contracts = () => {
   const navigate = useNavigate()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
@@ -41,11 +43,19 @@ const Contracts = () => {
 
   return (
     <div className='min-h-screen bg-slate-50 flex'>
-      <Sidebar user={user} />
-      <main className='flex-1 ml-64 px-8 py-8'>
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1  px-8 py-8'>
 
+        {/* Hamburger */}
+          <button
+            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className='w-5 h-5 text-slate-600' />
+          </button>
         {/* Header */}
         <div className='flex items-center justify-between mb-8'>
+          
           <div>
             <h1 className='text-2xl font-bold text-slate-900'>Contracts</h1>
             <p className='text-slate-500 text-sm mt-1'>

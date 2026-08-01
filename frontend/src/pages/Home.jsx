@@ -76,18 +76,18 @@ const Home = () => {
     <div className='min-h-screen bg-slate-50'>
       <Navbar />
       {/* Hero */}
-      <section className='flex flex-col lg:flex-row items-center justify-between px-8 pt-40 pb-24 gap-12 max-w-7xl mx-auto mb-10'>
+      <section className='flex flex-col lg:flex-row items-center justify-between px-8 sm:px-8 pt-40 pb-24 gap-12 max-w-7xl mx-auto mb-10'>
 
         {/* Left side - Text */}
         <div className='flex flex-col gap-6 max-w-xl'>
           <Badge variant='outline' className='w-fit'>AI-Powered Escrow</Badge>
-          <h1 className='text-5xl font-bold text-slate-900 leading-tight'>
+          <h1 className='text-5xl sm:text-3xl font-bold text-slate-900 leading-tight'>
             Freelance work, without the trust issues
           </h1>
           <p className='text-lg text-slate-500'>
             PactPay holds funds in escrow and uses AI to assess milestone completion before any payment is released. Clients and freelancers both stay protected.
           </p>
-          <div className='flex gap-3'>
+          <div className='flex gap-3 sm:flex-row'>
             <Button size='lg' onClick={() => navigate('/register')}>Start for free</Button>
             <Button size='lg' variant='outline' onClick={() => navigate('/login')}>Login</Button>
           </div>
