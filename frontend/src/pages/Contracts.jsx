@@ -4,8 +4,16 @@ import axios from 'axios'
 import Sidebar from './dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
 import { Menu, Plus } from 'lucide-react'
+import { motion } from 'framer-motion'
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 }
+}
 
+const stagger = {
+  visible: { transition: { staggerChildren: 0.06 } }
+}
 const statusColors = {
   DRAFT: 'text-slate-400',
   ACTIVE: 'text-blue-500',
@@ -47,15 +55,20 @@ const Contracts = () => {
       <main className='flex-1  px-8 py-8'>
 
         {/* Hamburger */}
-          <button
-            className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className='w-5 h-5 text-slate-600' />
-          </button>
+        <button
+          className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 mb-6'
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className='w-5 h-5 text-slate-600' />
+        </button>
         {/* Header */}
-        <div className='flex items-center justify-between mb-8'>
-          
+        <motion.div
+          className='flex items-center justify-between mb-8'
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+
           <div>
             <h1 className='text-2xl font-bold text-slate-900'>Contracts</h1>
             <p className='text-slate-500 text-sm mt-1'>
@@ -68,7 +81,7 @@ const Contracts = () => {
               New Contract
             </Button>
           )}
-        </div>
+        </motion.div>
 
         {/* Error */}
         {error && (
@@ -94,10 +107,17 @@ const Contracts = () => {
 
         {/* List */}
         {!loading && contracts.length > 0 && (
-          <div className='flex flex-col gap-2'>
+          <motion.div
+            className='flex flex-col gap-2'
+            variants={stagger}
+            initial='hidden'
+            animate='visible'
+          >
             {contracts.map(contract => (
-              <div
+              <motion.div
                 key={contract.id}
+                variants={fadeUp}
+                transition={{ duration: 0.3 }}
                 onClick={() => navigate(`/contracts/${contract.id}`)}
                 className='bg-white rounded-2xl px-5 py-4 flex items-center justify-between cursor-pointer hover:shadow-sm transition'
               >
@@ -113,13 +133,14 @@ const Contracts = () => {
                     {contract.status.replace('_', ' ')}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        )}
+          </motion.div>
+        )
+        }
 
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }
 

@@ -6,6 +6,7 @@ import { Plus, Menu } from 'lucide-react'
 import Sidebar from '../pages/dashboard/Sidebar'
 import StatsCard from '../pages/dashboard/StatsCard'
 import ContractsList from '../pages/dashboard/ContractsList.jsx'
+import { motion } from 'framer-motion'
 
 const Dashboard = () => {
   const [contracts, setContracts] = useState([])
@@ -39,7 +40,12 @@ const Dashboard = () => {
       <main className='flex-1  px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6'>
 
         {/* Header */}
-        <div className='flex items-center justify-between'>
+        <motion.div 
+          className='flex items-center justify-between'
+          initial={{opacity:0, y:-10}}
+          animate={{opacity:1,y:0}}
+          transition={{duration: 0.4}}
+        >
           <div className='flex items-center gap-3'>
 
             {/* Hamburger — mobile only */}
@@ -61,7 +67,7 @@ const Dashboard = () => {
           </div>
 
           
-        </div>
+        </motion.div>
 
         {/* Error */}
         {error && (
@@ -71,10 +77,24 @@ const Dashboard = () => {
         )}
 
         {/* Stats */}
-        <StatsCard contracts={contracts} role={user?.role} />
+        <motion.div
+          initial={{opacity:0,y:20}}
+          animate={{opacity:1,y:0}}
+          transition={{duration: 0.4, delay: 0.2}}  
+        >
+          <StatsCard contracts={contracts} role={user?.role} />
+
+        </motion.div>
 
         {/* Contracts */}
-        <ContractsList contracts={contracts} loading={loading} role={user?.role} />
+        <motion.div
+          initial={{opacity:0,x:20}}
+          animate={{opacity:1,x:0}}
+          transition={{duration: 0.4, delay: 0.2}}  
+        >
+          <ContractsList contracts={contracts} loading={loading} role={user?.role} />
+
+        </motion.div>
 
       </main>
     </div>

@@ -4,7 +4,17 @@ import axios from 'axios'
 import Sidebar from '../pages/dashboard/Sidebar'
 import { Button } from '@/components/ui/button'
 import { Clock, CheckCircle, AlertCircle, Circle, Menu } from 'lucide-react'
+import { motion } from 'framer-motion'
 
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+}
+
+const stagger = {
+    visible: { transition: { staggerChildren: 0.08 } }
+}
 const statusColors = {
     DRAFT: 'bg-slate-100 text-slate-600',
     ACTIVE: 'bg-blue-100 text-blue-600',
@@ -126,7 +136,12 @@ const ContractDetail = () => {
             <main className='flex-1  px-8 py-8'>
 
                 {/* Header */}
-                <div className='flex items-start justify-between mb-8'>
+                <motion.div
+                    className='flex items-start justify-between mb-8'
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                >
                     <div className='flex flex-col gap-2'>
                         <button
                             className='lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200'
@@ -146,19 +161,30 @@ const ContractDetail = () => {
                     <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${statusColors[contract.status]}`}>
                         {contract.status.replace('_', ' ')}
                     </span>
-                </div>
+                </motion.div>
 
                 <div className='grid lg:grid-cols-3 grid-cols-1 gap-6'>
 
                     {/* Left — Milestones */}
-                    <div className='lg:col-span-2 flex flex-col gap-4'>
+                    <motion.div
+                        className='lg:col-span-2 flex flex-col gap-4'
+                        variants={stagger}
+                        initial='hidden'
+                        animate='visible'
+
+                    >
                         <h2 className='font-semibold text-slate-900'>Milestones</h2>
 
                         {contract.milestones.map((milestone) => {
                             const verdict = contract.aiVerdicts?.find(v => v.milestoneId === milestone.id)
 
                             return (
-                                <div key={milestone.id} className='bg-white rounded-2xl p-5 flex flex-col gap-4'>
+                                <motion.div
+                                    key={milestone.id}
+                                    className='bg-white rounded-2xl p-5 flex flex-col gap-4'
+                                    variants={fadeUp}
+                                    transition={{ duration: 0.4 }}
+                                >
 
                                     {/* Milestone Header */}
                                     <div className='flex items-start justify-between'>
@@ -246,13 +272,18 @@ const ContractDetail = () => {
                                         )}
                                     </div>
 
-                                </div>
+                                </motion.div>
                             )
                         })}
-                    </div>
+                    </motion.div>
 
                     {/* Right — Escrow + Info */}
-                    <div className='flex flex-col gap-4'>
+                    <motion.div
+                        className='flex flex-col gap-4'
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                    >
 
                         {/* Escrow Balance */}
                         <div className='bg-slate-900 rounded-2xl p-5 flex flex-col gap-2'>
@@ -325,7 +356,7 @@ const ContractDetail = () => {
                             </Button>
                         )}
 
-                    </div>
+                    </motion.div>
                 </div>
             </main >
         </div >
