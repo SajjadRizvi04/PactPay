@@ -1,51 +1,49 @@
 # PactPay
 
-An AI-powered escrow platform for freelancers and clients.
-The basic idea is that freelancers and clients often don't trust each other when working remotely. Clients worry the freelancer will take the money and disappear. Freelancers worry the client will reject perfectly good work and refuse to pay. PactPay tries to solve this by holding funds in escrow and using AI to assess whether milestone work is actually complete before payment is released.
+An AI-powered escrow platform for freelancers and clients. The core idea is simple — freelancers and clients don't trust each other, and for good reason. Clients worry the freelancer will take money and disappear. Freelancers worry the client will reject good work and refuse to pay. PactPay holds funds in escrow and uses AI to assess whether milestone work is actually complete before any payment is released.
+
+This is my main portfolio project, built while learning backend architecture, financial systems, and AI integration.
 
 ---
 
 ## What it does
 
-- Client creates a contract with milestones, each with a title, description, amount, and due date
+- Client creates a contract with milestones — each with a title, description, amount, and due date
 - Client funds the escrow via Razorpay — money is held until work is verified
-- Freelancer works on each milestone and submits it with notes and a link to their work
-- Gemini AI assesses the submission against the milestone requirements and returns a verdict
+- Freelancer submits each milestone with notes and a link to their work
+- Gemini AI assesses the submission against the milestone requirements
 - If AI recommends approval, client gets notified to confirm the release
 - If AI recommends changes, freelancer is notified to fix the work
-- If AI can't determine completion (low confidence), a dispute is created for manual review
+- If AI can't determine completion, a dispute is created for manual review
 - If client goes silent for 14 days after a milestone is submitted, funds auto-release to the freelancer
-- If freelancer abandons the project for 14 days, further payments get locked
+- If freelancer abandons the project for 14 days, further payments lock
 
-The most important design decision I made: **the AI never directly triggers any payment**. It only makes a recommendation. A human always confirms before money moves. This felt like the right call for a financial application.
+The most important design decision: **the AI never directly triggers any payment**. It only recommends. A human always confirms before money moves.
 
 ---
 
 ## Tech Stack
 
-- **Node.js + Express** — backend API
-- **PostgreSQL + Prisma** — database and ORM
-- **Razorpay** — payment processing
-- **Gemini 3.5 Flash** — AI milestone assessment
-- **BullMQ + Redis** — background job queues for ghost detection and async AI processing
-- **JWT + bcrypt** — authentication
+**Backend**
+- Node.js + Express
+- PostgreSQL + Prisma
+- BullMQ + Redis (Memurai on Windows)
+- Gemini 2.5 Flash via `@google/genai`
+- Razorpay
+- JWT + bcrypt
+
+**Frontend**
+- React + Vite
+- Shadcn/ui + Tailwind CSS
+- Framer Motion
+- Axios
 
 ---
-
-## Documentation
-
-The backend is documented in detail in the `/docs` folder.
-
-- [Architecture](./docs/ARCHITECTURE.md) — folder structure, request lifecycle, three circle model
-- [Payment Flow](./docs/PAYMENT_FLOW.md) — escrow flow, append-only ledger, idempotency, ACID compliance
-- [AI Design](./docs/AI_DESIGN.md) — why AI never triggers payments, verdict processor, confidence threshold
-- [State Machine](./docs/STATE_MACHINE.md) — valid contract and milestone transitions
-- [Ghost Detection](./docs/GHOST_DETECTION.md) — 14 day rules, auto-release, idempotency
 
 ## Project Structure
 
 ```
-escrow-platform/
+pactpay/
 ├── backend/
 │   ├── prisma/
 │   │   └── schema.prisma
@@ -63,36 +61,27 @@ escrow-platform/
 │   │   └── utils/
 │   ├── app.js
 │   └── server.js
-└── frontend/
-    
-
+├── frontend/
+│   └── src/
+│       ├── pages/
+│       │   ├── auth/
+│       │   ├── dashboard/
+│       │   ├── Home.jsx
+│       │   ├── Dashboard.jsx
+│       │   ├── Contracts.jsx
+│       │   ├── ContractNew.jsx
+│       │   ├── ContractDetail.jsx
+│       │   ├── MilestoneDetail.jsx
+│       │   ├── ContractPayment.jsx
+│       │   ├── DisputeDetail.jsx
+│       │   └── Disputes.jsx
+│       ├── components/
+│       │   └── dashboard/
+│       └── shared/
+└── docs/
+    ├── backend/
+    └── frontend/
 ```
-
-Each module follows the same pattern: `routes → controller → service → database`. The controller is always thin — it just reads from the request and calls the service. All business logic lives in the service.
-
----
-
-## Key Engineering Decisions
-
-**Append-only ledger**
-
-The `Transaction` table never gets updated or deleted. Every money movement is a permanent insert. The escrow balance is always calculated by replaying the transaction history, not by reading a stored balance field. 
-
-**Prisma transactions on all financial operations**
-
-Any operation that involves both a ledger entry and a status update is wrapped in `prisma.$transaction`. If the ledger write succeeds but the milestone update fails, the whole thing rolls back. No partial state.
-
-**State machine for contracts and milestones**
-
-Valid state transitions are defined in `contract.statemachine.js` as a plain object. Before any status update, the transition is validated. You can't go from `DRAFT` directly to `COMPLETED`. This prevents a whole class of bugs.
-
-**AI as a safety gate, not an actor**
-
-The `verdict.processor.js` sits between the AI verdict and any action. The AI returns `APPROVE`, `REQUEST_CHANGES`, or `ESCALATE`. The processor decides what to do with that — notify the client, send back to freelancer, or create a dispute. The processor never calls the payment service. The client always has the final say.
-
-**Idempotency keys on payments**
-
-Every transaction row has a unique idempotency key. If a payment request is retried due to a network issue, the second insert fails with a unique constraint error instead of charging twice.
 
 ---
 
@@ -101,36 +90,54 @@ Every transaction row has a unique idempotency key. If a payment request is retr
 **Prerequisites**
 - Node.js 18+
 - PostgreSQL
-- Redis (or Memurai on Windows)
+- Redis or Memurai (Windows)
 
-**Setup**
+**Backend setup**
 
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/PactPay.git
-cd PactPay/backend
-
-# Install dependencies
+cd backend
 npm install
-
-# Set up environment variables
 cp .env.example .env
-# Fill in your values in .env
-
-# Run database migrations
+# fill in your values
 npx prisma migrate dev
-
-# Start the server
 node server.js
 ```
 
-**Environment variables needed**
+**Frontend setup**
 
-See `.env.example` for the full list. You'll need:
-- A PostgreSQL database
-- A Redis instance
-- Razorpay test keys (free at razorpay.com)
-- A Gemini API key (free at aistudio.google.com)
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# fill in your values
+npm run dev
+```
+
+---
+
+## Environment variables
+
+See `backend/.env.example` and `frontend/.env.example` for the full list.
+
+Backend needs: `DATABASE_URL`, `JWT_SECRET`, `PORT`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `GEMINI_API_KEY`, `REDIS_URL`
+
+Frontend needs: `VITE_RAZORPAY_KEY_ID`
+
+---
+
+## Documentation
+
+**Backend**
+- [Architecture](./docs/backend/ARCHITECTURE.md) — folder structure, request lifecycle, three circle model
+- [Payment Flow](./docs/backend/PAYMENT_FLOW.md) — escrow flow, append-only ledger, idempotency, ACID compliance
+- [AI Design](./docs/backend/AI_DESIGN.md) — why AI never triggers payments, verdict processor, confidence threshold
+- [State Machine](./docs/backend/STATE_MACHINE.md) — valid contract and milestone transitions
+- [Ghost Detection](./docs/backend/GHOST_DETECTION.md) — 14 day rules, auto-release, idempotency
+
+**Frontend**
+- [Architecture](./docs/frontend/ARCHITECTURE.md) — page structure, component hierarchy, state management
+- [Pages](./docs/frontend/PAGES.md) — what each page does and how it connects
+- [UI Design](./docs/frontend/UI_DESIGN.md) — design decisions, component library, animations
 
 ---
 
@@ -145,6 +152,7 @@ POST /api/auth/login
 **Contracts**
 ```
 POST   /api/contracts
+GET    /api/contracts
 GET    /api/contracts/:id
 PATCH  /api/contracts/:id/status
 POST   /api/contracts/:contractId/milestones/:milestoneId/submit
@@ -166,44 +174,26 @@ POST /api/ai/assess
 **Disputes**
 ```
 POST  /api/disputes
+GET   /api/disputes
 GET   /api/disputes/:id
 PATCH /api/disputes/:id/resolve
 ```
 
 ---
 
-## Required Environment variables 
-    PORT = your_port_number
-    DATABASE_URL="postgresql://username:password@localhost:5432/PactPay"
-    JWT_SECRET = "your_jwt_secret_key"
-    RAZORPAY_KEY_ID= "your_razorpay_key_id"
-    RAZORPAY_KEY_SECRET= "your_razorpay_key_secret"
-    GEMINI_API_KEY = "your_gemini_api_key"
-    REDIS_URL="redis://localhost:6379"
-
 ## What I learned building this
 
-Honestly the hardest part wasn't the code — it was figuring out where code belongs. I spent a lot of time understanding why controllers shouldn't talk to the database directly, why financial operations need transactions, and why background jobs need to be idempotent.
+The hardest part wasn't the code — it was figuring out where code belongs. I spent a lot of time learning why controllers shouldn't talk to the database directly, why financial operations need transactions, and why background jobs need to be idempotent.
 
-The ledger design took me a while to understand. My first instinct was to have a `balance` column on the contract that I'd update on every payment. The append-only approach felt weird at first but makes a lot more sense now — you can never lose data, you can always audit, and you can replay history if something goes wrong.
+The ledger design was the most interesting thing I built. My first instinct was to store a balance column and update it on every payment. The append-only approach felt weird at first but makes much more sense — you can never lose data, you can always audit, and you can replay history if something goes wrong.
 
-The AI safety gate was probably the most interesting design problem. The temptation was to just call the payment release function directly when AI returns APPROVE. But that felt wrong for a financial app. The extra layer of the verdict processor and requiring human confirmation before money moves was the right call.
-
----
-
-## What's next
-
-- Frontend (React + Redux + Shadcn) — currently in progress
-- Email notifications for verdicts and ghost detection events
-- Admin dashboard for dispute resolution
-- Better AI prompting with more context from previous submissions
+The AI safety gate was the most interesting design problem. The temptation was to wire the payment release directly to the AI verdict. But that felt wrong for a financial app. The extra layer of the verdict processor and requiring human confirmation before money moves was the right call.
 
 ---
 
 ## Contact
 
-Built by Sajjad Ali — final year CSE student.
+Built by Sajjad Ali — final year CSE student
 
-LinkedIn: https://www.linkedin.com/in/sajjad-ali-42a27028b/
-GitHub: https://github.com/SajjadRizvi04
-
+- GitHub: [SajjadRizvi04](https://github.com/SajjadRizvi04)
+- LinkedIn: [sajjad-ali](https://www.linkedin.com/in/sajjad-ali-42a27028b/)
