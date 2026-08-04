@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Menu, Plus, Trash2 } from 'lucide-react'
+import { Menu, Plus, Trash2, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -18,6 +18,10 @@ const ContractNew = () => {
   const [description, setDescription] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
   const [freelancer, setFreelancer] = useState('')
+  const [freelancerEmail, setFreelancerEmail] = useState('')
+  const [foundFreelancer, setFoundFreelancer] = useState(null)
+  const [freelancerError, setFreelancerError] = useState('')
+  const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
@@ -83,6 +87,23 @@ const ContractNew = () => {
       setLoading(false)
     }
   }
+  const handleSearchFreelancer = async () => {
+    setFreelancerError('')
+    setFoundFreelancer(null)
+    setSearching(true)
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/users/search?email=${freelancerEmail}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setFoundFreelancer(data)
+      setFreelancer(data.id)
+    } catch (err) {
+      setFreelancerError(err.response?.data?.error || 'User not found')
+    } finally {
+      setSearching(false)
+    }
+  }
   return (
     <div className='min-h-screen bg-slate-50 flex'>
       <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -142,12 +163,34 @@ const ContractNew = () => {
                 />
               </div>
               <div className='flex flex-col gap-1'>
-                <Label>Freelancer ID</Label>
-                <Input
-                  placeholder='Freelancer user ID'
-                  value={freelancer}
-                  onChange={e => setFreelancer(e.target.value)}
-                />
+                <Label>Freelancer Email</Label>
+                <div className='flex gap-2'>
+                  <Input
+                    placeholder='freelancer@email.com'
+                    value={freelancerEmail}
+                    onChange={e => setFreelancerEmail(e.target.value)}
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={handleSearchFreelancer}
+                    disabled={searching}
+                  >
+                    {searching ? 'Searching...' : 'Search'}
+                  </Button>
+                </div>
+                {freelancerError && (
+                  <p className='text-red-400 text-xs mt-1'>{freelancerError}</p>
+                )}
+                {foundFreelancer && (
+                  <div className='flex items-center gap-2 mt-1 bg-green-50 border border-green-100 rounded-lg px-3 py-2'>
+                    <CheckCircle className='w-4 h-4 text-green-500 flex-shrink-0' />
+                    <div>
+                      <p className='text-sm font-medium text-slate-900'>{foundFreelancer.name}</p>
+                      <p className='text-xs text-slate-400'>{foundFreelancer.email}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
