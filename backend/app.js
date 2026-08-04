@@ -6,7 +6,7 @@ import contractRouter from './src/modules/contracts/contract.routes.js'
 import paymentRouter from './src/modules/payments/payment.routes.js'
 import aiRouter from './src/modules/ai/ai.routes.js'
 import disputeRouter from './src/modules/disputes/dispute.routes.js'
-
+import userRouter from './src/modules/users/user.route.js'
 
 const app = express()
 
@@ -23,5 +23,6 @@ app.use('/api/contracts', contractRouter)
 app.use('/api/payments', paymentRouter)
 app.use('/api/ai', aiRouter)
 app.use('/api/disputes', disputeRouter)
+app.use('/api/users', userRouter);
 
 export default app
