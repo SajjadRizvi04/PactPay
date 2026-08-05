@@ -45,6 +45,10 @@ export default function Navbar() {
               {["Features", "How it works"].map((item) => (
                 <button
                   key={item}
+                  onClick={() => {
+                    const id = item === 'How it works' ? 'how-it-works' : 'features'
+                    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+                  }}
                   className="relative text-sm font-medium text-white/75 transition hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:bg-white after:transition-all hover:after:w-full"
                 >
                   {item}

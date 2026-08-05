@@ -138,7 +138,7 @@ const Home = () => {
       </section>
 
       {/* How it works */}
-      <section className='bg-primary py-24 px-8'>
+      <section id='how-it-works' className='bg-primary py-24 px-8'>
         <div className='max-w-7xl mx-auto flex flex-col gap-16'>
 
           <motion.div
@@ -191,7 +191,7 @@ const Home = () => {
       </section>
 
       {/* Features */}
-      <section className='bg-slate-50 py-24 px-8'>
+      <section id='features' className='bg-slate-50 py-24 px-8'>
         <div className='max-w-7xl mx-auto flex flex-col gap-12'>
 
           <motion.div

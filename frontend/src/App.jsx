@@ -13,6 +13,13 @@ import DisputeDetail from './pages/DisputeDetail'
 import Disputes from './pages/Disputes'
 import Contracts from './pages/Contracts'
 
+import { Navigate } from 'react-router-dom'
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token')
+  if (!token) return <Navigate to='/login' />
+  return children
+}
 function App() {
   
 
@@ -22,14 +29,15 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<LogIn/>}/>
         <Route path='/signup' element={<SignUp/>}/>
-        <Route path='/dashboard' element={<Dashboard/>}/>
-        <Route path='/contracts/new' element={<ContractNew/>}/>
-        <Route path= '/contracts/:id' element={<ContractDetail/>}/>
-        <Route path='/contracts/:id/milestones/:milestoneId' element={<MilestoneDetail />} />
-        <Route path='/contracts/:id/payment' element={<ContractPayment />} />
-        <Route path='/disputes/:id' element={<DisputeDetail />} />
-        <Route path='/disputes' element={<Disputes/>}/>
-        <Route path='/contracts' element={<Contracts/>}/>
+        <Route path='/dashboard' element={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
+        <Route path='/contracts/new' element={<ProtectedRoute><ContractNew/></ProtectedRoute>}/>
+        <Route path= '/contracts/:id' element={<ProtectedRoute><ContractDetail/></ProtectedRoute>}/>
+        <Route path='/contracts/:id/milestones/:milestoneId' element={<ProtectedRoute><MilestoneDetail /></ProtectedRoute>} />
+        <Route path='/contracts/:id/payment' element={<ProtectedRoute><ContractPayment /></ProtectedRoute>} />
+        <Route path='/disputes/:id' element={<ProtectedRoute><DisputeDetail /></ProtectedRoute>} />
+        <Route path='/disputes' element={<ProtectedRoute><Disputes/></ProtectedRoute>}/>
+        <Route path='/contracts' element={<ProtectedRoute><Contracts/></ProtectedRoute>}/>
+        <Route path='*' element={<Navigate to='/' />}/>
       </Routes>
       
     </>
