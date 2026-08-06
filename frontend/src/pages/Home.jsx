@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons"
 import { motion } from 'framer-motion'
+import hero from "../assets/hero.png"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -129,7 +130,7 @@ const Home = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <img
-            src='/src/assets/hero.png'
+            src={logo}
             alt='PactPay dashboard'
             className='w-full rounded-2xl shadow-2xl border border-slate-200'
           />
