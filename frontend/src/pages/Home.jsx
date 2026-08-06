@@ -130,7 +130,7 @@ const Home = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <img
-            src={logo}
+            src={hero}
             alt='PactPay dashboard'
             className='w-full rounded-2xl shadow-2xl border border-slate-200'
           />
