@@ -25,7 +25,7 @@ const MilestoneDetail = () => {
   useEffect(() => {
     const fetchMilestone = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
+        const { data } = await axios.get(`${VITE_API_URL}/api/contracts/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const found = data.milestones.find(m => m.id === milestoneId)
@@ -49,7 +49,7 @@ const MilestoneDetail = () => {
     setSubmitting(true)
     try {
       await axios.post(
-        `http://localhost:5000/api/contracts/${id}/milestones/${milestoneId}/submit`,
+        `${VITE_API_URL}/api/contracts/${id}/milestones/${milestoneId}/submit`,
         { submissionNotes, submissionUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       )

@@ -66,7 +66,7 @@ const ContractNew = () => {
 
     setLoading(true)
     try {
-      const { data } = await axios.post('http://localhost:5000/api/contracts/', {
+      const { data } = await axios.post(`${VITE_API_URL}/api/contracts/`, {
         title,
         description,
         totalAmount,
@@ -92,8 +92,7 @@ const ContractNew = () => {
     setFoundFreelancer(null)
     setSearching(true)
     try {
-      const { data } = await axios.get(
-        `http://localhost:5000/api/users/search?email=${freelancerEmail}`,
+      const { data } = await axios.get(`${VITE_API_URL}/api/users/search?email=${freelancerEmail}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setFoundFreelancer(data)

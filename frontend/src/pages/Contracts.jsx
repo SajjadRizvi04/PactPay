@@ -36,7 +36,7 @@ const Contracts = () => {
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/contracts', {
+        const { data } = await axios.get(`${VITE_API_URL}/api/contracts`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setContracts(data)

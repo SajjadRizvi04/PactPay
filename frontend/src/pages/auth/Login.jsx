@@ -18,7 +18,7 @@ const Login = () => {
     setError('')
     setLoading(true)
     try {
-        const {data} = await axios.post('http://localhost:5000/api/auth/login', {email,password})
+        const {data} = await axios.post(`${VITE_API_URL}/api/auth/login`, {email,password})
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
         navigate('/dashboard')

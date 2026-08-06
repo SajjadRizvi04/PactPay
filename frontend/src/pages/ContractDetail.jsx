@@ -53,7 +53,7 @@ const ContractDetail = () => {
     useEffect(() => {
         const fetchContract = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
+                const { data } = await axios.get(`${VITE_API_URL}/api/contracts/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 setContract(data)
@@ -69,11 +69,11 @@ const ContractDetail = () => {
     const handleReleasePayment = async (milestoneId) => {
         setActionLoading(true)
         try {
-            await axios.post('http://localhost:5000/api/payments/release',
+            await axios.post(`${VITE_API_URL}/api/payments/release`,
                 { contractId: id, milestoneId },
                 { headers: { Authorization: `Bearer ${token}` } }
             )
-            const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
+            const { data } = await axios.get(`${VITE_API_URL}/api/contracts/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setContract(data)
@@ -86,11 +86,11 @@ const ContractDetail = () => {
     const handleRequestChanges = async (milestoneId) => {
         setActionLoading(true)
         try {
-            await axios.post('http://localhost:5000/api/payments/refund',
+            await axios.post(`${VITE_API_URL}/api/payments/refund`,
                 { contractId: id, milestoneId },
                 { headers: { Authorization: `Bearer ${token}` } }
             )
-            const { data } = await axios.get(`http://localhost:5000/api/contracts/${id}`, {
+            const { data } = await axios.get(`${VITE_API_URL}/api/contracts/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setContract(data)
