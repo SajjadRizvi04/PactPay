@@ -108,7 +108,7 @@ const ContractDetail = () => {
         return sum
     }, 0) || 0
 
-    if (loading) {
+    if (loading || !contract) {
         return (
             <div className='min-h-screen bg-slate-50 flex'>
                 <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
