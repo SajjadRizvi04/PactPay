@@ -26,6 +26,7 @@ const ContractPayment = () => {
             Authorization: `Bearer ${token}`
           }
         })
+        setContract(data);
       } catch (error) {
         setError(error.response?.data?.error || 'Failed to load contract, try again')
       } finally {
