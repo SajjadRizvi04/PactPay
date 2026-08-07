@@ -14,7 +14,7 @@ app.use(helmet())
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://pactpay-frpntend.onrender.com/'
+        'https://pactpay-frpntend.onrender.com'
     ],
     credentials: true
 }))
