@@ -20,7 +20,7 @@ const Register = () => {
   const submitHandler = async () => {
     setError('')
     setLoading(true)
-    console.log(${VITE_API_URL})
+    console.log(`${VITE_API_URL}`)
     try {
       const res = await axios.post(`${VITE_API_URL}/api/auth/register`, {
         name: userName, email, password, role
