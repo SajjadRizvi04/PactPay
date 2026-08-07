@@ -99,6 +99,8 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
     }
     const validStatus = transitionMilestone(milestone.status, 'SUBMITTED')
 
+    
+    await aiQueue.add('assess-milestone', { contractId, milestoneId })
     return await prisma.milestone.update({
         where: {id: milestoneId}, 
         data: {
@@ -107,7 +109,5 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
             submissionUrl
         }
     })
-    await aiQueue.add('assess-milestone', { contractId, milestoneId })
-
     return upDateMilestonedone
 } 
