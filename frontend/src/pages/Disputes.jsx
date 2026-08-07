@@ -34,7 +34,7 @@ const Disputes = () => {
   useEffect(() => {
     const fetchDisputes = async () => {
       try {
-        const { data } = await axios.get(`${VITE_API_URL}/api/disputes`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/disputes`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setDisputes(data)

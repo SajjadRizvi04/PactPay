@@ -21,7 +21,7 @@ const ContractPayment = () => {
   useEffect(() => {
     const fetchContract = async () => {
       try {
-        const { data } = await axios.get(`${VITE_API_URL}/api/contracts/${id}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/contracts/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -58,7 +58,7 @@ const ContractPayment = () => {
         return
       }
 
-      const { data: order } = await axios.post(`${VITE_API_URL}/api/payments/fund`, {
+      const { data: order } = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/fund`, {
         contractId: id,
         amount: Number(contract.totalAmount)
 
@@ -76,7 +76,7 @@ const ContractPayment = () => {
 
         handler: async (response) => {
           try {
-            await axios.post(`${VITE_API_URL}/api/payments/verify`,
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/verify`,
               {
                 razorpayOrderId: response.razorpay_order_id,
                 razorpayPaymentId: response.razorpay_payment_id,

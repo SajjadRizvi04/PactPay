@@ -31,7 +31,7 @@ const DisputeDetail = () => {
   useEffect(() => {
     const fetchDispute = async () => {
       try {
-        const { data } = await axios.get(`${VITE_API_URL}/api/disputes/${id}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/disputes/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setDispute(data)
@@ -47,7 +47,7 @@ const DisputeDetail = () => {
   const handleResolve = async () => {
     setError('')
     try {
-      await axios.patch(`${VITE_API_URL}/api/disputes/${id}/resolve`,
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/disputes/${id}/resolve`,
         { resolution, notes },
         { headers: { Authorization: `Bearer ${token}` } }
       )
