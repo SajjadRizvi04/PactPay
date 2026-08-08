@@ -61,9 +61,7 @@ export default function Navbar() {
         {/* Right Side */}
         <div className="flex items-center gap-2 sm:gap-4">
 
-          <button className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 transition hover:bg-white/20">
-            <Moon className="h-5 w-5 text-white" />
-          </button>
+          
 
           {/* Desktop buttons */}
           <div className="hidden lg:flex items-center gap-4">
