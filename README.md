@@ -27,8 +27,8 @@ The most important design decision: **the AI never directly triggers any payment
 **Backend**
 - Node.js + Express
 - PostgreSQL + Prisma
-- BullMQ + Redis (Memurai on Windows)
-- Gemini 2.5 Flash via `@google/genai`
+- BullMQ + Redis (Memurai on Windows, Upstash in production)
+- Gemini AI via `@google/genai`
 - Razorpay
 - JWT + bcrypt
 
@@ -44,6 +44,18 @@ The most important design decision: **the AI never directly triggers any payment
 
 ```
 pactpay/
+├── README.md
+├── docs/
+│   ├── backend/
+│   │   ├── ARCHITECTURE.md
+│   │   ├── PAYMENT_FLOW.md
+│   │   ├── AI_DESIGN.md
+│   │   ├── STATE_MACHINE.md
+│   │   └── GHOST_DETECTION.md
+│   └── frontend/
+│       ├── ARCHITECTURE.md
+│       ├── PAGES.md
+│       └── UI_DESIGN.md
 ├── backend/
 │   ├── prisma/
 │   │   └── schema.prisma
@@ -55,32 +67,18 @@ pactpay/
 │   │   │   ├── contracts/
 │   │   │   ├── payments/
 │   │   │   ├── ai/
-│   │   │   └── disputes/
+│   │   │   ├── disputes/
+│   │   │   └── users/
 │   │   ├── jobs/
 │   │   ├── middleware/
 │   │   └── utils/
 │   ├── app.js
 │   └── server.js
-├── frontend/
-│   └── src/
-│       ├── pages/
-│       │   ├── auth/
-│       │   ├── dashboard/
-│       │   ├── Home.jsx
-│       │   ├── Dashboard.jsx
-│       │   ├── Contracts.jsx
-│       │   ├── ContractNew.jsx
-│       │   ├── ContractDetail.jsx
-│       │   ├── MilestoneDetail.jsx
-│       │   ├── ContractPayment.jsx
-│       │   ├── DisputeDetail.jsx
-│       │   └── Disputes.jsx
-│       ├── components/
-│       │   └── dashboard/
-│       └── shared/
-└── docs/
-    ├── backend/
-    └── frontend/
+└── frontend/
+    └── src/
+        ├── pages/
+        ├── components/
+        └── shared/
 ```
 
 ---
@@ -119,25 +117,18 @@ npm run dev
 
 See `backend/.env.example` and `frontend/.env.example` for the full list.
 
-Backend needs: `DATABASE_URL`, `JWT_SECRET`, `PORT`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `GEMINI_API_KEY`, `REDIS_URL`
+**Backend needs:**
+- `DATABASE_URL` — PostgreSQL connection string
+- `JWT_SECRET` — any long random string
+- `PORT` — server port (5000 locally, 10000 on Render)
+- `RAZORPAY_KEY_ID` — from razorpay.com dashboard
+- `RAZORPAY_KEY_SECRET` — from razorpay.com dashboard
+- `GEMINI_API_KEY` — from aistudio.google.com
+- `REDIS_URL` — local Redis or Upstash URL
 
-Frontend needs: `VITE_RAZORPAY_KEY_ID`
-
----
-
-## Documentation
-
-**Backend**
-- [Architecture](./docs/backend/ARCHITECTURE.md) — folder structure, request lifecycle, three circle model
-- [Payment Flow](./docs/backend/PAYMENT_FLOW.md) — escrow flow, append-only ledger, idempotency, ACID compliance
-- [AI Design](./docs/backend/AI_DESIGN.md) — why AI never triggers payments, verdict processor, confidence threshold
-- [State Machine](./docs/backend/STATE_MACHINE.md) — valid contract and milestone transitions
-- [Ghost Detection](./docs/backend/GHOST_DETECTION.md) — 14 day rules, auto-release, idempotency
-
-**Frontend**
-- [Architecture](./docs/frontend/ARCHITECTURE.md) — page structure, component hierarchy, state management
-- [Pages](./docs/frontend/PAGES.md) — what each page does and how it connects
-- [UI Design](./docs/frontend/UI_DESIGN.md) — design decisions, component library, animations
+**Frontend needs:**
+- `VITE_API_URL` — backend URL
+- `VITE_RAZORPAY_KEY_ID` — public Razorpay key
 
 ---
 
@@ -179,6 +170,27 @@ GET   /api/disputes/:id
 PATCH /api/disputes/:id/resolve
 ```
 
+**Users**
+```
+GET /api/users/search?email=
+```
+
+---
+
+## Documentation
+
+**Backend**
+- [Architecture](./docs/backend/ARCHITECTURE.md) — folder structure, request lifecycle, three circle model
+- [Payment Flow](./docs/backend/PAYMENT_FLOW.md) — escrow flow, append-only ledger, idempotency, ACID compliance
+- [AI Design](./docs/backend/AI_DESIGN.md) — why AI never triggers payments, verdict processor, confidence threshold
+- [State Machine](./docs/backend/STATE_MACHINE.md) — valid contract and milestone transitions
+- [Ghost Detection](./docs/backend/GHOST_DETECTION.md) — 14 day rules, auto-release, idempotency
+
+**Frontend**
+- [Architecture](./docs/frontend/ARCHITECTURE.md) — page structure, component hierarchy, state management
+- [Pages](./docs/frontend/PAGES.md) — what each page does and how it connects
+- [UI Design](./docs/frontend/UI_DESIGN.md) — design decisions, component library, animations
+
 ---
 
 ## What I learned building this
@@ -197,3 +209,4 @@ Built by Sajjad Ali — final year CSE student
 
 - GitHub: [SajjadRizvi04](https://github.com/SajjadRizvi04)
 - LinkedIn: [sajjad-ali](https://www.linkedin.com/in/sajjad-ali-42a27028b/)
+- Live: [pactpay-frpntend.onrender.com](https://pactpay-frpntend.onrender.com)
