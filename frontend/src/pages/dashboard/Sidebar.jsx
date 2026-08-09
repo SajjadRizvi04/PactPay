@@ -27,10 +27,11 @@ const Sidebar = ({ user, open, onClose }) => {
       )}
 
       <aside className={`
+        h-full fixed lg:h-auto
         w-64 bg-primary flex flex-col self-stretch 
         transition-transform duration-300
         ${open ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:static lg:z-auto 
+        lg:translate-x-0 lg:static lg:z-auto z-50
       `}>
 
         {/* Logo */}

@@ -20,7 +20,7 @@ const buildPrompt = (contract, milestone) => {
     Due Date: ${milestone.dueDate}
     Status: ${milestone.status}
 
-    FREELAMCER SUBMISSION: 
+    FREELANCER SUBMISSION: 
     Notes: ${milestone.submissionNotes || 'No notes provided'}
     Submission URL: ${milestone.submissionUrl || 'No URL provided'}
 
