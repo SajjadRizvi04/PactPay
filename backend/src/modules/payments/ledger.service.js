@@ -14,3 +14,9 @@ export const getEscrowBalance = async (contractId)=> {
     }, 0)
     return balance
 }
+export const getContractLedger = async (contractId) => {
+  return await prisma.transaction.findMany({
+    where: { contractId },
+    orderBy: { createdAt: 'asc' }
+  })
+}
