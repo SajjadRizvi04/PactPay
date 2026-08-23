@@ -33,7 +33,7 @@ export const loginUser = async ({email,password}) => {
     if(!user) throw new Error('Invalid Credentials')
 
     const valid = await bcrypt.compare(password,user.password)
-    if(!valid) throw new Error('Invalid credentials')
+    if(!valid) throw new Error('Invalid Credentials')
 
     const token = jwt.sign({
         id: user.id,
