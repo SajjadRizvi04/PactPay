@@ -91,7 +91,7 @@ export const resolveDispute = async(disputeId,userId, {resolution,notes}) => {
                 amount: dispute.contract.totalAmount,
                 contractId: dispute.contractId,
                 milestoneId: dispute.milestoneId,
-                idempotencyKey: uuidv4(),
+                idempotencyKey: `dispute_resolved_release_${disputeId}`,
                 meta: { resolvedBy: userId, disputeId }
                 }
             })
@@ -109,7 +109,7 @@ export const resolveDispute = async(disputeId,userId, {resolution,notes}) => {
                     amount: dispute.contract.totalAmount,
                     contractId: dispute.contractId,
                     milestoneId: dispute.milestoneId,
-                    idempotencyKey: uuidv4(),
+                    idempotencyKey: `dispute_resolved_refund_${disputeId}`,
                     meta: { resolvedBy: userId, disputeId }
                 }
             })

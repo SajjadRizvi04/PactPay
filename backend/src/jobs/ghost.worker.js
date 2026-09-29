@@ -43,7 +43,7 @@ const processGhostJob = async (job) => {
                             amount: milestone.amount,
                             contractId: contract.id,
                             milestoneId: milestone.id,
-                            idempotencyKey: uuidv4(),
+                            idempotencyKey: `ghost_auto_release_${milestone.id}`,
                             meta: { reason: 'CLIENT_GHOST_AUTO_RELEASE' }
                         }
                     })
@@ -54,7 +54,7 @@ const processGhostJob = async (job) => {
 
 
                 }
-                await tx.ghsotEvent.create({
+                await tx.ghostEvent.create({
                     data: {
                         type: 'CLIENT_SILENT',
                         action: 'AUTO_RELEASED',
