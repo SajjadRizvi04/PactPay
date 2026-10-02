@@ -2,7 +2,6 @@ import {z} from 'zod'
 
 export const fundEscrowSchema = z.object({
     contractId: z.string().uuid(),
-    amount: z.number().positive()
 })
 
 export const releasePaymentSchema = z.object({
@@ -14,7 +13,6 @@ export const verifyPaymentSchema = z.object({
   razorpayPaymentId: z.string(),
   razorpaySignature: z.string(),
   contractId: z.string().uuid(),
-  amount: z.number().positive()
 })
 
 export const refundSchema = z.object({

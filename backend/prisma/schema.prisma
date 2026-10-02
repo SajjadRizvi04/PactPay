@@ -11,6 +11,12 @@ enum Role {
   CLIENT
   FREELANCER
 }
+enum PaymentAttemptStatus {
+  CREDITED
+  REFUND_PENDING
+  REFUNDED
+  REFUND_FAILED
+}
 
 enum ContractStatus {
   DRAFT
@@ -98,6 +104,7 @@ model Contract {
   disputes     Dispute[]
   ghostEvents  GhostEvent[]
   aiVerdicts   AIVerdict[]
+  paymentAttempts PaymentAttempt[]
 }
 
 model Milestone {
@@ -130,6 +137,18 @@ model Transaction {
   createdAt      DateTime        @default(now())
 
   contract Contract @relation(fields: [contractId], references: [id])
+}
+model PaymentAttempt {
+  id                String               @id @default(uuid())
+  razorpayPaymentId String               @unique
+  razorpayOrderId   String
+  contractId        String
+  amount            Int                  // paise
+  status            PaymentAttemptStatus
+  reason            String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  contract          Contract             @relation(fields: [contractId], references: [id])
 }
 
 model AIVerdict {
