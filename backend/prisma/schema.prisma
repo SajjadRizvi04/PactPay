@@ -81,7 +81,6 @@ model User {
   role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   contractsAsClient     Contract[] @relation("ClientContracts")
   contractsAsFreelancer Contract[] @relation("FreelancerContracts")
 }
