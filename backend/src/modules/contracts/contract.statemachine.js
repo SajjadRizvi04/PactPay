@@ -10,7 +10,7 @@ const contractTransitions = {
 const milestoneTransitions = {
     PENDING: ['SUBMITTED'],
     SUBMITTED: ['APPROVED', 'REJECTED', 'DISPUTED'],
-    REJECTED: ['SUBMITTED'],
+    REJECTED: ['SUBMITTED', 'DISPUTED'],
     DISPUTED: ['APPROVED','REJECTED'],
     APPROVED: []
 }

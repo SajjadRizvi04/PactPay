@@ -1,6 +1,5 @@
 import prisma  from '../../db/client.js'
-import { transitionContract } from '../contracts/contract.statemachine.js'
-import  {v4 as uuidv4} from 'uuid'
+import { transitionContract, transitionMilestone } from '../contracts/contract.statemachine.js'
 
 export const createDispute = async (userId, {contractId, milestoneId, reason, description}) => {
     const contract = await prisma.contract.findUnique({
@@ -10,7 +9,14 @@ export const createDispute = async (userId, {contractId, milestoneId, reason, de
     if(!contract) throw new Error('No contract found')
     if(contract.clientId !== userId && contract.freelancerId !== userId) throw new Error('Unauthorized ')
 
-    const validStatus = transitionContract(contract.status, 'DISPUTED')
+    
+    const milestone= await prisma.milestone.findUnique({where: {id: milestoneId}})
+    if (!milestone || milestone.contractId !== contractId) {
+        throw new Error('Milestone does not belong to this contract')
+    }
+    const contractNext = transitionContract(contract.status, 'DISPUTED')
+    const milestoneNext = transitionMilestone(milestone.status, 'DISPUTED')
+
     const result = await prisma.$transaction(async (tx)=> {
         const dispute = await tx.dispute.create({
             data: {
@@ -21,11 +27,12 @@ export const createDispute = async (userId, {contractId, milestoneId, reason, de
                 raisedById: userId
             }
         })
-        await tx.contract.update({
-            where: {id:contractId},
-            data: { status: validStatus }
+        await tx.milestone.update({ where: { id: milestoneId }, data: { status: milestoneNext } })
+        const { count } = await tx.contract.updateMany({
+            where: { id: contractId, status: 'IN_PROGRESS' },
+            data: { status: contractNext }
         })
-
+        if (count === 0) throw new Error('Contract state changed, try again')
         return dispute
     })
 

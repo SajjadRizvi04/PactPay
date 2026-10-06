@@ -1,8 +1,7 @@
 import {z} from 'zod'
-
 export const createDisputeSchema = z.object({
     contractId: z.string().uuid(),
-    milestoneId: z.string().uuid().optional(),
+    milestoneId: z.string().uuid(),
     reason: z.enum([
         'WORK_INCOMPLETE',
         'WORK_NOT_AS_DESCRIBED',

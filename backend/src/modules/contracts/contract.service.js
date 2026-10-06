@@ -97,17 +97,23 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
     if(milestone.contractId !== contractId) {
         throw new Error('Milestone does not belong to this contract')
     }
+    if (!['ACTIVE', 'IN_PROGRESS'].includes(milestone.contract.status)) {
+        throw new Error('Contract must be funded and not disputed to submit work')
+    }
     const validStatus = transitionMilestone(milestone.status, 'SUBMITTED')
-
+    const updated = await prisma.$transaction(async (tx) => {
+        const m = await tx.milestone.update({
+            where: { id: milestoneId },
+            data: { status: validStatus, submissionNotes, submissionUrl }
+        })
+        await tx.contract.updateMany({
+            where: { id: contractId, status: 'ACTIVE' },
+            data: { status: 'IN_PROGRESS' }
+        })
+        return m
+    })
     
     await aiQueue.add('assess-milestone', { contractId, milestoneId })
-    return await prisma.milestone.update({
-        where: {id: milestoneId}, 
-        data: {
-            status: validStatus,
-            submissionNotes,
-            submissionUrl
-        }
-    })
-    return upDateMilestonedone
+    
+    return updated
 } 
