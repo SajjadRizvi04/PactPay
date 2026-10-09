@@ -117,7 +117,7 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className='flex gap-3 flex-col sm:flex-row'
           >
-            <Button size='lg' onClick={() => navigate('/register')}>Start for free</Button>
+            <Button size='lg' onClick={() => navigate('/signup')}>Start for free</Button>
             <Button size='lg' variant='outline' onClick={() => navigate('/login')}>Login</Button>
           </motion.div>
         </motion.div>

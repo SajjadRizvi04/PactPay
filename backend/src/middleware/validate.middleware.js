@@ -6,7 +6,7 @@ export const validate = (schema) =>{
         .map(i => `${i.path.join('.')}: ${i.message}`)
         .join('; ')
 
-        return res.status(400).json({error: result.error.format()})
+        return res.status(400).json({error: message})
     }
     req.body = result.data
     next()

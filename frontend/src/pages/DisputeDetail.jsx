@@ -27,6 +27,7 @@ const DisputeDetail = () => {
   const [dispute, setDispute] = useState()
   const [resolution, setResolution] = useState('')
   const [notes, setNotes] = useState('')
+  const [resolving, setResolving] = useState(false)
 
   useEffect(() => {
     const fetchDispute = async () => {
@@ -46,6 +47,7 @@ const DisputeDetail = () => {
 
   const handleResolve = async () => {
     setError('')
+    setResolving(true)
     try {
       await axios.patch(`${import.meta.env.VITE_API_URL}/api/disputes/${id}/resolve`,
         { resolution, notes },
@@ -54,6 +56,8 @@ const DisputeDetail = () => {
       navigate('/dashboard')
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to send data, try again')
+    } finally {
+      setResolving(false)
     }
   }
   if (loading) return (
@@ -68,6 +72,17 @@ const DisputeDetail = () => {
           <Menu className='w-5 h-5 text-slate-600' />
         </button>
         <p className='text-slate-400'>Loading...</p>
+      </main>
+    </div>
+  )
+  if (!dispute) return (
+    <div className='min-h-screen bg-slate-50 flex'>
+      <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <main className='flex-1 px-8 py-8 flex flex-col items-center justify-center gap-4'>
+        <p className='text-red-400'>{error || 'Dispute not found'}</p>
+        <Button variant='outline' onClick={() => navigate('/disputes')}>
+          Back to Disputes
+        </Button>
       </main>
     </div>
   )
@@ -99,7 +114,11 @@ const DisputeDetail = () => {
         </div>
 
         <div className='flex flex-col gap-6'>
-
+          {error && (
+            <div className='bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg'>
+              {error}
+            </div>
+          )}
           {/* Dispute Info */}
           <div className='bg-white rounded-2xl p-6 flex flex-col gap-4'>
             <div className='flex items-center justify-between'>
@@ -159,8 +178,11 @@ const DisputeDetail = () => {
                 <Button variant='outline' onClick={() => navigate(`/contracts/${dispute.contractId}`)}>
                   Cancel
                 </Button>
-                <Button onClick={handleResolve}>
-                  Resolve Dispute
+                <Button
+                  onClick={handleResolve}
+                  disabled={resolving || !resolution || notes.trim().length < 10}
+                >
+                  {resolving ? 'Resolving...' : 'Resolve Dispute'}
                 </Button>
               </div>
             </div>
