@@ -166,12 +166,13 @@ export const releasePayment = async (clientId, { contractId, milestoneId }) => {
         where: { id: milestoneId },
         include: { contract: true }
     })
-
+    // Check if milestone is of the same contract
     if (!milestone) throw new Error('Milestone not found')
     if (milestone.contractId !== contractId) throw new Error('Milestone does not belong to this contract')
     if (milestone.contract.clientId !== clientId) throw new Error('Unauthorized')
     if (milestone.status !== 'SUBMITTED') throw new Error('Milestone must be SUBMITTED to release payment')
-
+    
+    // If balance is less than milestone amount return an error
     const balance = await getEscrowBalance(contractId)
     if (balance < Number(milestone.amount)) {
         throw new Error('Insufficient escrow balance')
@@ -179,6 +180,7 @@ export const releasePayment = async (clientId, { contractId, milestoneId }) => {
 
     const validStatus = transitionMilestone(milestone.status, 'APPROVED')
     let result
+    // Release the payment if above checks passed
     try {
         result = await prisma.$transaction(async (tx) => {
             const transaction = await tx.transaction.create({
@@ -191,7 +193,7 @@ export const releasePayment = async (clientId, { contractId, milestoneId }) => {
                     meta: { releasedBy: clientId }
                 }
             })
-
+            //Update milestone to Approved
             const updatedMilestone = await tx.milestone.update({
                 where: { id: milestoneId },
                 data: { status: validStatus }
@@ -201,7 +203,7 @@ export const releasePayment = async (clientId, { contractId, milestoneId }) => {
                 where: { contractId }
             })
             const allApproved = allMilestones.every(m => m.status === 'APPROVED')
-
+            //Check if all milestones are approved
             if (allApproved) {
                 await tx.contract.update({
                     where: { id: contractId },
@@ -228,21 +230,23 @@ export const refundPayment = async (clientId, { contractId, milestoneId }) => {
     const contract = await prisma.contract.findUnique({
         where: { id: contractId }
     })
-
+    //Same checks of contract and milestone
     if (!contract) throw new Error('Contract not found')
     if (contract.clientId !== clientId) throw new Error('Unauthorized')
-
-    const balance = await getEscrowBalance(contractId)
-    if (balance <= 0) throw new Error('No balance to refund')
-
-    const milestone = await prisma.milestone.findUnique({
+        const milestone = await prisma.milestone.findUnique({
         where: { id: milestoneId }
     })
 
     if (!milestone) throw new Error('Milestone not found')
+    if(milestone.contractId !== contractId) throw new Error('Milestone is not in this contract')
+
+    const balance = await getEscrowBalance(contractId)
+    if (balance < Number(milestone.amount)) throw new Error('Insufficient balance in escrow to fund this milestone')
+
+    
 
     const validStatus = transitionMilestone(milestone.status, 'REJECTED')
-
+    // Update status to rejected if successfull and refund, rn razorpay order is not used
     try {
         await prisma.$transaction(async (tx) => {
             await tx.transaction.create({
@@ -279,10 +283,5 @@ export const refundPayment = async (clientId, { contractId, milestoneId }) => {
         }
         throw error
     }
-
-
-
-
-
     return { success: true }
 }

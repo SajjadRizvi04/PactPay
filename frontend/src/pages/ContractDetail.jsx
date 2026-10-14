@@ -46,60 +46,58 @@ const ContractDetail = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [contract, setContract] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
+    const [loadError, setLoadError] = useState('')
+    const [actionError, setActionError] = useState('')
     const [actionLoading, setActionLoading] = useState(false)
 
-    useEffect(() => {
-        const fetchContract = async () => {
-            try {
-                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/contracts/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                setContract(data)
-            } catch (err) {
-                setError(err.response?.data?.error || 'Failed to load contract')
-            } finally {
-                setLoading(false)
-            }
+    const authHeaders = { headers: { Authorization: `Bearer ${token}` } }
+
+    const loadContract = async () => {
+        try {
+            const { data } = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/contracts/${id}`,
+                authHeaders
+            )
+            setContract(data)
+            setLoadError('')
+        } catch (err) {
+            setLoadError(err.response?.data?.error || 'Failed to load contract')
+        } finally {
+            setLoading(false)
         }
-        fetchContract()
+    }
+
+    useEffect(() => {
+        loadContract()
     }, [id])
 
-    const handleReleasePayment = async (milestoneId) => {
+    const runAction = async (path, milestoneId, fallbackMessage) => {
+        setActionError('')
         setActionLoading(true)
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/release`,
+            await axios.post(
+                `${import.meta.env.VITE_API_URL}${path}`,
                 { contractId: id, milestoneId },
-                { headers: { Authorization: `Bearer ${token}` } }
+                authHeaders
             )
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/contracts/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            setContract(data)
+            await loadContract()
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to release payment')
+            setActionError(err.response?.data?.error || fallbackMessage)
         } finally {
             setActionLoading(false)
         }
     }
-    const handleRequestChanges = async (milestoneId) => {
-        setActionLoading(true)
-        try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/refund`,
-                { contractId: id, milestoneId },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/contracts/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            setContract(data)
-        } catch (err) {
-            setError(err.response?.data?.error || 'Failed to request changes')
-        } finally {
-            setActionLoading(false)
-        }
-    }
+
+    const handleReleasePayment = (milestoneId) =>
+        runAction('/api/payments/release', milestoneId, 'Failed to release payment')
+
+    const handleRequestChanges = (milestoneId) =>
+        runAction(
+            `/api/contracts/${id}/milestones/${milestoneId}/request-changes`,
+            milestoneId,
+            'Failed to request changes'
+        )
+
 
     const escrowBalance = contract?.transactions?.reduce((sum, t) => {
         if (t.type === 'ESCROW_FUNDED') return sum + Number(t.amount)
@@ -108,23 +106,26 @@ const ContractDetail = () => {
         return sum
     }, 0) || 0
 
-    if (loading || !contract) {
+    if (loading) {
         return (
             <div className='min-h-screen bg-slate-50 flex'>
                 <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                <main className='flex-1  px-8 py-8 flex items-center justify-center'>
+                <main className='flex-1 px-8 py-8 flex items-center justify-center'>
                     <p className='text-slate-400'>Loading contract...</p>
                 </main>
             </div>
         )
     }
 
-    if (error) {
+    if (!contract) {
         return (
             <div className='min-h-screen bg-slate-50 flex'>
                 <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                <main className='flex-1  px-8 py-8 flex items-center justify-center'>
-                    <p className='text-red-400'>{error}</p>
+                <main className='flex-1 px-8 py-8 flex flex-col items-center justify-center gap-4'>
+                    <p className='text-red-400'>{loadError || 'Contract not found'}</p>
+                    <Button variant='outline' onClick={() => navigate('/dashboard')}>
+                        Back to Dashboard
+                    </Button>
                 </main>
             </div>
         )
@@ -162,7 +163,14 @@ const ContractDetail = () => {
                         {contract.status.replace('_', ' ')}
                     </span>
                 </motion.div>
-
+                {actionError && (
+                    <div className='bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg mb-6 flex items-start justify-between gap-4'>
+                        <span>{actionError}</span>
+                        <button onClick={() => setActionError('')} className='text-red-400 hover:text-red-600'>
+                            ✕
+                        </button>
+                    </div>
+                )}
                 <div className='grid lg:grid-cols-3 grid-cols-1 gap-6'>
 
                     {/* Left — Milestones */}

@@ -71,7 +71,7 @@ const ContractPayment = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
-        name: 'PayPact',
+        name: 'PactPay',
         description: contract.title,
         order_id: order.id,
 
@@ -189,7 +189,7 @@ const ContractPayment = () => {
             <p className='text-slate-400 text-xs'>Held securely in escrow until milestones are approved</p>
             <div className='flex items-center gap-1.5 mt-2'>
               <div className='w-2 h-2 rounded-full bg-green-400'></div>
-              <span className='text-green-400 text-xs'>Protected by PayPact</span>
+              <span className='text-green-400 text-xs'>Protected by PactPay</span>
             </div>
           </div>
 

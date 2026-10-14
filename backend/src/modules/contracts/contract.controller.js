@@ -1,4 +1,4 @@
-import { createContract, getContract,getContracts, updateContractStatus, submitMileStone } from "./contract.service.js";
+import { createContract, getContract,getContracts, updateContractStatus, submitMileStone, requestMilestoneChanges} from "./contract.service.js";
 
 export const create = async (req,res)=> {
     try {
@@ -12,7 +12,7 @@ export const create = async (req,res)=> {
 export const get = async (req,res)=> {
     try {
         const contract = await getContract(req.params.id,req.user.id)
-        res.status(201).json(contract)
+        res.status(200).json(contract)
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -42,5 +42,17 @@ export const submit = async(req,res)=> {
         res.status(200).json(milestone)
     } catch (error) {
         res.status(400).json({error: error.message})
+    }
+}
+export const requestChanges = async (req, res) => {
+    try {
+        const milestone = await requestMilestoneChanges(
+            req.params.contractId,
+            req.params.milestoneId,
+            req.user.id
+        )
+        res.status(200).json(milestone)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
     }
 }

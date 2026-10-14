@@ -117,3 +117,33 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
     
     return updated
 } 
+
+export const requestMilestoneChanges = async (contractId, milestoneId, userId) => {
+    const milestone = await prisma.milestone.findUnique({
+        where: { id: milestoneId },
+        include: { contract: true }
+    })
+
+    // Same message for "missing" and "belongs to another contract" (see row 7)
+    if (!milestone || milestone.contractId !== contractId) {
+        throw new Error('Milestone not found')
+    }
+    if (milestone.contract.clientId !== userId) {
+        throw new Error('Only the client can request changes')
+    }
+    if (milestone.contract.status !== 'IN_PROGRESS') {
+        throw new Error('Changes can only be requested while the contract is in progress')
+    }
+
+    // Conditional update: only flips a milestone that is still SUBMITTED.
+    // No Transaction row is written, so escrow balance is untouched.
+    const { count } = await prisma.milestone.updateMany({
+        where: { id: milestoneId, status: 'SUBMITTED' },
+        data: { status: 'REJECTED' }
+    })
+    if (count === 0) {
+        throw new Error('Milestone is not awaiting review')
+    }
+
+    return prisma.milestone.findUnique({ where: { id: milestoneId } })
+}
