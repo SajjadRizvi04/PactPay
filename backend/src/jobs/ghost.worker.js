@@ -1,11 +1,12 @@
-import { Worker } from "bullmq"
 import { connection } from "./connection.js"
 import prisma from '../db/client.js'
 import { ghostQueue } from './queues.js'
 import { v4 as uuidv4 } from 'uuid'
-import { sendToDeadLetter
+import {
+    sendToDeadLetter
 
- } from "./deadletter.worker.js"
+} from "./deadletter.worker.js"
+import { getEscrowBalance } from "../modules/payments/ledger.service.js"
 
 const GHOST_THRESHOLD_DAYS = 14
 
@@ -35,47 +36,65 @@ const processGhostJob = async (job) => {
         )
 
         if (submittedMilestones.length > 0) {
-            await prisma.$transaction(async (tx) => {
-                for (const milestone of submittedMilestones) {
-                    await tx.transaction.create({
+            let available = await getEscrowBalance(contract.id)
+            const releasable = []
+            for (const m of submittedMilestones) {
+                if (available >= Number(m.amount)) {
+                    releasable.push(m)
+                    available -= Number(m.amount)
+                }
+            }
+            if (releasable.length === 0) continue
+            try {
+                await prisma.$transaction(async (tx) => {
+                    for (const milestone of releasable) {
+
+                        await tx.transaction.create({
+                            data: {
+                                type: 'MILESTONE_RELEASED',
+                                amount: milestone.amount,
+                                contractId: contract.id,
+                                milestoneId: milestone.id,
+                                idempotencyKey: `milestone_released_${milestone.id}`,
+                                meta: { reason: 'CLIENT_GHOST_AUTO_RELEASE' }
+                            }
+                        })
+                        await tx.milestone.update({
+                            where: { id: milestone.id },
+                            data: { status: 'APPROVED' }
+                        })
+
+
+                    }
+                    await tx.ghostEvent.create({
                         data: {
-                            type: 'MILESTONE_RELEASED',
-                            amount: milestone.amount,
+                            type: 'CLIENT_SILENT',
+                            action: 'AUTO_RELEASED',
                             contractId: contract.id,
-                            milestoneId: milestone.id,
-                            idempotencyKey: `ghost_auto_release_${milestone.id}`,
-                            meta: { reason: 'CLIENT_GHOST_AUTO_RELEASE' }
+                            processed: true
                         }
                     })
-                    await tx.milestone.update({
-                        where: { id: milestone.id },
-                        data: { status: 'APPROVED' }
-                    })
-
-
-                }
-                await tx.ghostEvent.create({
-                    data: {
-                        type: 'CLIENT_SILENT',
-                        action: 'AUTO_RELEASED',
-                        contractId: contract.id,
-                        processed: true
-                    }
                 })
-            })
+            } catch (e) {
+                if (e.code === 'P2002') {
+                    console.log(`Ghost: ${contract.id} already released by client, skipping`)
+                    continue
+                }
+                throw e
+            }
             continue
         }
 
         const pendingMilestones = contract.milestones.filter(m => m.status === 'PENDING')
         const contractOld = contract.createdAt < thresholdDate
 
-        if(pendingMilestones.length > 0 && contractOld) {
+        if (pendingMilestones.length > 0 && contractOld) {
             await prisma.$transaction(async (tx) => {
                 await tx.contract.update({
                     where: { id: contract.id },
-                    data: { status: 'DISPUTED'}
+                    data: { status: 'DISPUTED' }
                 })
-                
+
                 await tx.dispute.create({
                     data: {
                         reason: 'GHOST_DETECTED',
@@ -99,23 +118,23 @@ const processGhostJob = async (job) => {
 
 }
 
-const worker = new Worker('ghost', processGhostJob, {connection})
+const worker = new Worker('ghost', processGhostJob, { connection })
 
-worker.on('completed', (job)=> {
+worker.on('completed', (job) => {
     console.log(`Ghost job ${job.id} completed`)
 })
 
-worker.on('failed', async (job,error)=> {
+worker.on('failed', async (job, error) => {
     console.error(`Ghost job ${job.id} failed:`, error.message)
-    await sendToDeadLetter('ghost', job.id, error, job.data) 
+    await sendToDeadLetter('ghost', job.id, error, job.data)
 })
 
-export const scheduleGhostCheck = async ()=> {
+export const scheduleGhostCheck = async () => {
     await ghostQueue.add(
         'check-ghost',
         {},
         {
-            repeat: {every: 24*60*60*1000}
+            repeat: { every: 24 * 60 * 60 * 1000 }
         }
     )
 }

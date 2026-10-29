@@ -1,6 +1,7 @@
 import prisma from '../../db/client.js'
 import { transitionContract, transitionMilestone } from './contract.statemachine.js'
 import { aiQueue } from '../../jobs/queues.js';
+import { getEscrowBalance } from '../payments/ledger.service.js';
 
 export const createContract = async (clientId,data) => {
     const {title, description, totalAmount,freelancerId,milestones} = data;
@@ -76,6 +77,13 @@ export const updateContractStatus = async (contractId, userId,nextStatus) =>{
     }
 
     const validStatus = transitionContract(contract.status, nextStatus)
+    if (contract.status !== 'DRAFT') {
+        throw new Error('Funded contracts are cancelled through POST /api/payments/refund')
+    }
+
+    if (validStatus === 'CANCELLED' && (await getEscrowBalance(contractId)) > 0) {
+        throw new Error('Funded contracts cannot be cancelled until a refund flow exists')
+    }
 
     return await prisma.contract.update({
         where: {id: contractId},
@@ -99,6 +107,10 @@ export const submitMileStone = async (contractId, milestoneId, userId, {submissi
     }
     if (!['ACTIVE', 'IN_PROGRESS'].includes(milestone.contract.status)) {
         throw new Error('Contract must be funded and not disputed to submit work')
+    }
+    const balance = await getEscrowBalance(contractId)
+    if (balance < Number(milestone.amount)) {
+        throw new Error('Escrow is not funded for this milestone')
     }
     const validStatus = transitionMilestone(milestone.status, 'SUBMITTED')
     const updated = await prisma.$transaction(async (tx) => {

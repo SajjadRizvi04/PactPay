@@ -49,10 +49,12 @@ const ContractDetail = () => {
     const [loadError, setLoadError] = useState('')
     const [actionError, setActionError] = useState('')
     const [actionLoading, setActionLoading] = useState(false)
+    const [loading,setLoading] = useState(false);
 
     const authHeaders = { headers: { Authorization: `Bearer ${token}` } }
 
     const loadContract = async () => {
+        setLoading(true)
         try {
             const { data } = await axios.get(
                 `${import.meta.env.VITE_API_URL}/api/contracts/${id}`,

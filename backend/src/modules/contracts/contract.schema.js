@@ -14,5 +14,5 @@ export const createContractSchema = z.object({
 })
 
 export const updateContractStatusSchema = z.object({
-    status: z.enum(['ACTIVE', 'CANCELLED'])
+    status: z.enum(['CANCELLED'])
 })
