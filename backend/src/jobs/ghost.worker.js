@@ -7,6 +7,7 @@ import {
 
 } from "./deadletter.worker.js"
 import { getEscrowBalance } from "../modules/payments/ledger.service.js"
+import { Worker } from "bullmq"
 
 const GHOST_THRESHOLD_DAYS = 14
 

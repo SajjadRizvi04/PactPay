@@ -41,18 +41,24 @@ const buildPrompt = (contract, milestone) => {
 `
 }
 
-export const assessMilestone = async (contractId,milestoneId)=> {
+export const assessMilestone = async (contractId, milestoneId) => {
     const contract = await prisma.contract.findUnique({
-        where: {id: contractId},
-        include: {milestones: true}
+        where: { id: contractId },
+        include: { milestones: true }
     })
 
-    if(!contract) throw new Error('Contract not found')
-    
-    const milestone = contract.milestones.find(m=>m.id === milestoneId)
-    if(!milestone) throw new Error('Milestone not found')
-    
-    const prompt = buildPrompt(contract,milestone)
+    if (!contract) throw new Error('Contract not found')
+
+    const milestone = contract.milestones.find(m => m.id === milestoneId)
+    if (!milestone) throw new Error('Milestone not found')
+    if (contract.status !== 'IN_PROGRESS') {
+        throw new Error('Contract is not in progress')
+    }
+    if (milestone.status !== 'SUBMITTED') {
+        throw new Error('Milestone is not awaiting review')
+    }
+
+    const prompt = buildPrompt(contract, milestone)
 
     const response = await ai.models.generateContent({
         model: 'gemini-3.5-flash',
@@ -69,7 +75,7 @@ export const assessMilestone = async (contractId,milestoneId)=> {
         throw new Error('AI returned invalid response format')
     }
 
-    if(!['APPROVE', 'REQUEST_CHANGES', 'ESCALATE'].includes(parsed.verdict)) {
+    if (!['APPROVE', 'REQUEST_CHANGES', 'ESCALATE'].includes(parsed.verdict)) {
         throw new Error('AI returned invalid verdict')
     }
 

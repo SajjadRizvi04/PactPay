@@ -1,0 +1,5 @@
+30/10/2026
+Deleted Ai routes cuz ai assesment should only be triggered when a milestone is submitted so not anyone can trigger
+gemini quota.
+AI assessment has no auth also so, I added checks.
+
