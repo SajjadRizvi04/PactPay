@@ -2,7 +2,7 @@ const contractTransitions = {
     DRAFT: ['ACTIVE', 'CANCELLED'],
     ACTIVE: ['IN_PROGRESS', 'CANCELLED'],
     IN_PROGRESS: ['COMPLETED', 'DISPUTED'],
-    DISPUTED: ['IN_PROGRESS', 'CANCELLED'],
+    DISPUTED: ['IN_PROGRESS', 'CANCELLED', 'COMPLETED'],
     COMPLETED: [],
     CANCELLED: []
 }
@@ -12,7 +12,8 @@ const milestoneTransitions = {
     SUBMITTED: ['APPROVED', 'REJECTED', 'DISPUTED'],
     REJECTED: ['SUBMITTED', 'DISPUTED'],
     DISPUTED: ['APPROVED','REJECTED'],
-    APPROVED: []
+    APPROVED: [],
+    REFUNDED: []
 }
 
 export const transitionContract = (currentStatus, nextStatus) => {

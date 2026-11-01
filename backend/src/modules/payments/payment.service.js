@@ -202,7 +202,7 @@ export const releasePayment = async (clientId, { contractId, milestoneId }) => {
             const allMilestones = await tx.milestone.findMany({
                 where: { contractId }
             })
-            const allApproved = allMilestones.every(m => m.status === 'APPROVED')
+            const allApproved = allMilestones.every(m => ['APPROVED', 'REFUNDED'].includes(m.status))
             //Check if all milestones are approved
             if (allApproved) {
                 await tx.contract.update({

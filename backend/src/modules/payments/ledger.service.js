@@ -1,7 +1,7 @@
 import prisma from '../../db/client.js'
 
-export const getEscrowBalance = async (contractId)=> {
-    const transactions = await prisma.transaction.findMany({
+export const getEscrowBalance = async (contractId, db = prisma)=> {
+    const transactions = await db.transaction.findMany({
         where: {contractId}
     })
 

@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   CLIENT
   FREELANCER
+  ADMIN
 }
 enum PaymentAttemptStatus {
   CREDITED
@@ -33,6 +34,7 @@ enum MilestoneStatus {
   APPROVED
   REJECTED
   DISPUTED
+  REFUNDED
 }
 
 enum TransactionType {
@@ -53,6 +55,7 @@ enum DisputeStatus {
   UNDER_REVIEW
   RESOLVED_CLIENT
   RESOLVED_FREELANCER
+  AWAITING_ACCEPTANCE
 }
 
 enum DisputeReason {
@@ -164,20 +167,45 @@ model AIVerdict {
 }
 
 model Dispute {
-  id          String        @id @default(uuid())
-  status      DisputeStatus @default(OPEN)
-  reason      DisputeReason
-  description String
-  contractId  String
-  milestoneId String?
-  raisedById  String
-  resolvedAt  DateTime?
-  resolution  String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id               String        @id @default(uuid())
+  status           DisputeStatus @default(OPEN)
+  reason           DisputeReason
+  description      String
+  contractId       String
+  milestoneId      String?
+  raisedById       String
+  resolvedAt       DateTime?
+  resolution       String?
+  resolvedById     String?       // null when resolutionSource is AI_AUTO
+  resolutionSource String?       // AI_AUTO | ADMIN
+  evidenceDeadline DateTime?     // null for worker-created (ghost) disputes
+  appealDeadline   DateTime?
+  appealedById     String?
+  aiProposal       Json?
+  escalationReason String?       // AI_PROCESSING while the worker holds it; otherwise why a human is needed
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
-  contract  Contract   @relation(fields: [contractId], references: [id])
-  milestone Milestone? @relation(fields: [milestoneId], references: [id])
+  contract  Contract          @relation(fields: [contractId], references: [id])
+  milestone Milestone?        @relation(fields: [milestoneId], references: [id])
+  evidence  DisputeEvidence[]
+
+  @@index([status, evidenceDeadline])
+  @@index([status, appealDeadline])
+  @@index([contractId])
+}
+model DisputeEvidence {
+  id        String   @id @default(uuid())
+  disputeId String
+  authorId  String
+  kind      String   @default("EVIDENCE") // EVIDENCE | APPEAL
+  content   String
+  url       String?
+  createdAt DateTime @default(now())
+
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+
+  @@index([disputeId])
 }
 
 model GhostEvent {
