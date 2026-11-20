@@ -7,3 +7,6 @@ AI assessment has no auth also so, I added checks.
 Restructuring the dispute feature,
 -Created admin role to handle disputes
 -changed schema and added jobs
+
+20/11/2026
+Adding admin middleware and added safe url checks 
