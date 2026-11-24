@@ -10,3 +10,6 @@ Restructuring the dispute feature,
 
 20/11/2026
 Adding admin middleware and added safe url checks 
+
+25/11/2026
+Added a validation check of the stuff submitted by the user and an AI response will be generated to resolve disputes
